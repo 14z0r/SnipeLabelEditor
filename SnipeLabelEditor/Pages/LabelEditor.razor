@@ -1,0 +1,122 @@
+﻿@page "/labeleditor"
+@page "/labeleditor/{LabelId:int}"
+@using Microsoft.EntityFrameworkCore;
+@inject IToastService toastService
+@inject LabelsDBContext dbContext
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="input-group mb-3">
+                <span class="input-group-text">Label name</span>
+                <input class="form-control" @bind-value="label.Name" placeholder="Label name here" />
+            </div>
+        </div>
+        <div class="col">
+            <button class="btn btn-success" @onclick="SaveLabel">Save</button>
+            <button class="btn btn-primary" @onclick="SetHTMLText">Reload label</button>
+            <button class="btn btn-primary" onclick="PrintImage('@imageDataURL'); return false;">Print</button>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col">
+            <div style="display: flex; justify-content: center">
+                <div id="PrintDiv" style="border-style: dotted; display: inline-block;">
+                    <img id="labelimage" src="@imageDataURL"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-8">
+            <div class="mt-2">
+                <StandaloneCodeEditor @ref="_editor" CssClass="monaco-editor-container" ConstructionOptions="EditorConstructionOptions" OnDidChangeModelContent="SetHTMLText" OnDidInit="SetHTMLText"/>
+            </div>
+        </div>
+        <div class="col-4">
+            <AssetSelector @ref="_assetSelector"/>
+        </div>
+    </div>
+</div>
+
+<style>
+    .monaco-editor-container {
+        height: 700px;
+        border: 1px solid gray;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public int LabelId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (LabelId > 0)
+        {
+            var label = await dbContext.Labels.FirstOrDefaultAsync(x => x.Id == LabelId);
+            if (label is not null)
+            {
+                this.label = label;
+            }
+        }
+    }
+
+    private AssetSelector _assetSelector = null!;
+    private StandaloneCodeEditor _editor = null!;
+
+    private Label label = new Label()
+    {
+        HTML = "<div style=\"width: 200px; height: 80px\">\n\n</div>"
+    };
+
+    private string htmlVariablesReplaced = "";
+
+    private StandaloneEditorConstructionOptions EditorConstructionOptions(StandaloneCodeEditor editor)
+    {
+        return new StandaloneEditorConstructionOptions
+        {
+            Language = "html",
+            GlyphMargin = true,
+            Value = label.HTML
+        };
+    }
+
+    private async Task SetHTMLText()
+    {
+        var lableHTMLRaw = await _editor.GetValue();
+
+        foreach (var item in _assetSelector.JsonFields)
+        {
+            lableHTMLRaw = lableHTMLRaw.Replace($"#{item.Key}#", item.Value);
+        }
+        htmlVariablesReplaced = lableHTMLRaw;
+        RenderImage();
+    }
+
+    private async Task SaveLabel()
+    {
+        label.HTML = await _editor.GetValue();
+        label.ImageBaseString = HTMLToImage.RenderImageAsBase64(label.HTML);
+
+        if (dbContext.Labels.FirstOrDefault(x => x.Id == label.Id) != null)
+        {
+            dbContext.Labels.Update(label);
+        }
+        else
+        {
+            dbContext.Labels.Add(label);
+        }
+
+        await dbContext.SaveChangesAsync();
+    }
+
+    string imageDataURL = string.Empty;
+
+    private void RenderImage()
+    {
+        imageDataURL = HTMLToImage.RenderImageAsBase64(htmlVariablesReplaced);
+    }
+}

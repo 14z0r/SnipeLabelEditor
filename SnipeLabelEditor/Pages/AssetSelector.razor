@@ -1,0 +1,134 @@
+﻿@page "/assetselector"
+@inject IToastService toastService
+
+<div class="input-group">
+    <span class="input-group-text">Asset-Id</span>
+    <input class="form-control" @bind-value="_assetId" />
+    <button class="btn btn-primary" @onclick="SelectAsset">GO!</button>
+</div>
+
+<hr />
+
+<div class="overflow-auto" style="max-height: 640px">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name of Field</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in JsonFields)
+            {
+                <tr>
+                    <td>@item.Key</td>
+                    <td>@item.Value</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    private string _assetId { get; set; } = string.Empty;
+
+    public Dictionary<string, string> JsonFields = new Dictionary<string, string>();
+
+    private async Task SelectAsset()
+    {
+        try
+        {
+            string jsonstring = await Globals.SnipeIT.GetStringAsync($"hardware/{_assetId}");
+
+            var node = JsonStringToJsonNode(jsonstring);
+
+            if (node is not null)
+            {
+                JsonFields.Clear();
+                AddJsonNodeToDictionary(node);
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ShowError(ex.Message);
+        }
+    }
+
+    private JsonNode JsonStringToJsonNode(string jsonstring)
+    {
+        if (string.IsNullOrEmpty(jsonstring))
+        {
+            return null;
+        }
+
+        JsonNode _jsonNode = JsonObject.Parse(jsonstring);
+
+        if (_jsonNode is null)
+        {
+            return null;
+        }
+        else
+        {
+            return _jsonNode;
+        }
+    }
+
+    private void AddJsonNodeToDictionary(JsonNode jsonnode)
+    {
+        if (jsonnode is null)
+        {
+            return;
+        }
+
+        foreach (var field in jsonnode.AsObject())
+        {
+            if (field.Value is not null)
+            {
+                if (field.Key == "custom_fields")
+                {
+                    string cfjsonString = field.Value.ToString();
+                    var jsonObjectCF = JsonObject.Parse(cfjsonString);
+                    foreach (var nestedField in jsonObjectCF.AsObject())
+                    {
+                        if (nestedField.Value is not null)
+                        {
+                            string cfChildjsonString = nestedField.Value.ToString();
+                            var jsonObjectCFChild = JsonObject.Parse(cfChildjsonString);
+                            foreach (var nestedFildFilds in jsonObjectCFChild.AsObject())
+                            {
+                                if (nestedFildFilds.Value is not null)
+                                {
+                                    JsonFields.Add($"{field.Key}_{nestedField.Key}_{nestedFildFilds.Key}", nestedFildFilds.Value.ToString());
+                                }
+                            }
+                        }
+
+                    }
+                }
+                else if (field.Value.ToString().Contains("{"))
+                {
+                    try
+                    {
+                        string jsonNested = field.Value.ToString();
+                        var jsonObjectTemp = JsonObject.Parse(jsonNested);
+                        foreach (var fieldTemp in jsonObjectTemp.AsObject())
+                        {
+                            if (fieldTemp.Value is not null)
+                            {
+                                JsonFields.Add($"{field.Key}_{fieldTemp.Key}", fieldTemp.Value.ToString());
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+                }
+                else
+                {
+                    JsonFields.Add(field.Key, field.Value.ToString());
+                }
+            }
+        }
+    }
+}

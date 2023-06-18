@@ -1,0 +1,32 @@
+﻿@page "/settings"
+@inject IToastService toastService
+
+<div class="container">
+    <div class="mb-3">
+        <label class="form-label">SnipeAPI Base-URL</label>
+        <input class="form-control" @bind-value="Globals.Settings.APIBaseURL" placeholder="https://snipe-it.domain/api/v1/" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Bearer-Token</label>
+        <textarea class="form-control" rows="5" @bind="Globals.Settings.APIBarerToken"></textarea>
+    </div>
+    <div class="mb-3">
+        <button class="btn btn-primary" @onclick="SaveChanges">Save</button>
+    </div>
+</div>
+
+@code{
+    private void SaveChanges()
+    {
+        try
+        {
+            APISettings.SaveSettings();
+            toastService.ShowSuccess("Setting saved!");
+        }
+        catch (Exception ex)
+        {
+            toastService.ShowError(ex.Message);
+        }
+    }
+}
+

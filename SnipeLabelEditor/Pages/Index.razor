@@ -1,0 +1,50 @@
+﻿@page "/"
+@using Microsoft.EntityFrameworkCore;
+@inject LabelsDBContext dbContext
+@inject NavigationManager navigationManager
+
+<div class="container">
+    @if (_labels != null)
+    {
+        @foreach (var item in _labels)
+        {
+            <div class="card mb-3">
+                <div class="row g-0">
+                    <div class="col-md-4 rounded-start justify-content-center d-flex" style="background-color: lightgray">
+                        <img src="@item.ImageBaseString" style="object-fit: none">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">@item.Name</h5>
+                            <div class="card-text">
+                                <button class="btn btn-primary" @onclick="() => OpenEdit(item.Id)">Open/Edit</button>
+                                <button class="btn btn-danger" @onclick="() => Delete(item)">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        _labels = await dbContext.Labels.ToListAsync();
+    }
+
+    private List<Label> _labels;
+
+    private void OpenEdit(int labelId)
+    {
+        navigationManager.NavigateTo($"/labeleditor/{labelId}");
+    }
+
+    private async Task Delete(Label label)
+    {
+        dbContext.Labels.Remove(label);
+        await dbContext.SaveChangesAsync();
+    }
+}
