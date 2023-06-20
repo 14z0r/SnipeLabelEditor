@@ -1,5 +1,6 @@
 using Blazored.Toast;
 using Microsoft.EntityFrameworkCore;
+using SnipeLabelEditor.Data;
 
 namespace SnipeLabelEditor
 {

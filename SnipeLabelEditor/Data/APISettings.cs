@@ -1,7 +1,7 @@
 ﻿using SnipeLabelEditor.Models;
 using System.Text.Json;
 
-namespace SnipeLabelEditor
+namespace SnipeLabelEditor.Data
 {
     public class APISettings
     {

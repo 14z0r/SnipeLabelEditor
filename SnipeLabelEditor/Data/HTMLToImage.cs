@@ -1,6 +1,6 @@
 ﻿using CoreHtmlToImage;
 
-namespace SnipeLabelEditor
+namespace SnipeLabelEditor.Data
 {
     public static class HTMLToImage
     {
