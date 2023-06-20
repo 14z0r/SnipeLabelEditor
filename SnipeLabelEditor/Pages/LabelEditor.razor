@@ -1,5 +1,6 @@
 ﻿@page "/labeleditor"
 @page "/labeleditor/{LabelId:int}"
+@using HtmlAgilityPack;
 @inject IToastService toastService
 @inject LabelsDBContext dbContext
 
@@ -13,7 +14,7 @@
         </div>
         <div class="col">
             <button class="btn btn-success" @onclick="SaveLabel">Save</button>
-            <button class="btn btn-primary" @onclick="SetHTMLText">Reload label</button>
+            <button class="btn btn-primary" @onclick="RenderImage">Reload label</button>
             <button class="btn btn-primary" onclick="PrintImage('@imageDataURL'); return false;">Print</button>
         </div>
     </div>
@@ -31,7 +32,7 @@
     <div class="row">
         <div class="col-8">
             <div class="mt-2">
-                <StandaloneCodeEditor @ref="_editor" CssClass="monaco-editor-container" ConstructionOptions="EditorConstructionOptions" OnDidChangeModelContent="SetHTMLText" OnDidInit="SetHTMLText"/>
+                <StandaloneCodeEditor @ref="_editor" CssClass="monaco-editor-container" ConstructionOptions="EditorConstructionOptions" OnDidChangeModelContent="RenderImage" OnDidInit="RenderImage" />
             </div>
         </div>
         <div class="col-4">
@@ -71,8 +72,6 @@
         HTML = "<div style=\"width: 200px; height: 80px\">\n\n</div>"
     };
 
-    private string htmlVariablesReplaced = "";
-
     private StandaloneEditorConstructionOptions EditorConstructionOptions(StandaloneCodeEditor editor)
     {
         return new StandaloneEditorConstructionOptions
@@ -83,22 +82,18 @@
         };
     }
 
-    private async Task SetHTMLText()
-    {
-        var lableHTMLRaw = await _editor.GetValue();
+    string imageDataURL = string.Empty;
 
-        foreach (var item in _assetSelector.JsonFields)
-        {
-            lableHTMLRaw = lableHTMLRaw.Replace($"#{item.Key}#", item.Value);
-        }
-        htmlVariablesReplaced = lableHTMLRaw;
-        RenderImage();
+    private async Task RenderImage()
+    {
+        string html = await _editor.GetValue();
+        imageDataURL = HTMLToImage.RenderLabel(html, _assetSelector.JsonFields);
     }
 
     private async Task SaveLabel()
     {
         label.HTML = await _editor.GetValue();
-        label.ImageBaseString = HTMLToImage.RenderImageAsBase64(label.HTML);
+        label.ImageBaseString = HTMLToImage.RenderLabel(label.HTML);
 
         if (dbContext.Labels.FirstOrDefault(x => x.Id == label.Id) != null)
         {
@@ -110,12 +105,5 @@
         }
 
         await dbContext.SaveChangesAsync();
-    }
-
-    string imageDataURL = string.Empty;
-
-    private void RenderImage()
-    {
-        imageDataURL = HTMLToImage.RenderImageAsBase64(htmlVariablesReplaced);
     }
 }

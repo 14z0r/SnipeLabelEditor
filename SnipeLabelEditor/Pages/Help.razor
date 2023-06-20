@@ -1,3 +1,23 @@
 ﻿@page "/help"
 
+<h4>Custom HTML-Tags</h4>
 
+<pre><code>
+    &lt;qrcode size="1"&gt;www.my-asset.de/assets/100&lt;/qrcode&gt;
+</code></pre>
+
+<pre><code>
+    &lt;barcode width="160" 
+            height="25" 
+            includelabel="true" 
+            fontsize="12" 
+            fontfamily="Arial" 
+            codetype="Code128"&gt;www.my-asset.de/assets/100&lt;/barcode&gt;
+</code></pre>
+
+@foreach (var item in Enum.GetValues(typeof(BarcodeStandard.Type)))
+{
+    <pre><code>
+        @item
+    </code></pre>
+}
