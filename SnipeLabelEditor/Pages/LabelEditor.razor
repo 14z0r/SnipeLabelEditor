@@ -13,6 +13,18 @@
             </div>
         </div>
         <div class="col">
+            <div class="input-group mb-3">
+                <span class="input-group-text">Height</span>
+                <input class="form-control" @bind-value="label.Height"/>
+                <span class="input-group-text">px</span>
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">Width</span>
+                <input class="form-control" @bind-value="label.Width"/>
+                <span class="input-group-text">px</span>
+            </div>
+        </div>
+        <div class="col">
             <button class="btn btn-success" @onclick="SaveLabel">Save</button>
             <button class="btn btn-primary" @onclick="RenderImage">Reload label</button>
             <button class="btn btn-primary" onclick="PrintImage('@imageDataURL'); return false;">Print</button>
@@ -87,13 +99,13 @@
     private async Task RenderImage()
     {
         string html = await _editor.GetValue();
-        imageDataURL = HTMLToImage.RenderLabel(html, _assetSelector.JsonFields);
+        imageDataURL = HTMLToImage.RenderLabel(html, label.Height, label.Width,_assetSelector.JsonFields);
     }
 
     private async Task SaveLabel()
     {
         label.HTML = await _editor.GetValue();
-        label.ImageBaseString = HTMLToImage.RenderLabel(label.HTML);
+        label.ImageBaseString = HTMLToImage.RenderLabel(label.HTML, label.Height, label.Width);
 
         if (dbContext.Labels.FirstOrDefault(x => x.Id == label.Id) != null)
         {

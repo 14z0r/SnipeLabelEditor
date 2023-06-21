@@ -13,11 +13,26 @@ namespace SnipeLabelEditor.Data
         private static QRCodeGenerator _generator = new QRCodeGenerator();
         private static Barcode _barcode = new Barcode();
 
-        private static string RenderImageAsBase64(string html)
+        private static string RenderImageAsBase64(string html, int height, int width)
         {
             html = $"<div style=\"margin: -8px -8px -8px -8px;\"> {html} </div>";
             var bytes = _converter.FromHtmlString(html, 50, ImageFormat.Png, 100);
-            return string.Format("data:image/png;base64,{0}", Convert.ToBase64String(bytes));
+
+            if (height <= 0 || width <= 0)
+            {
+                return string.Format("data:image/png;base64,{0}", Convert.ToBase64String(bytes));
+            }
+            else
+            {
+                var image = SKImage.FromEncodedData(bytes);
+                var bitmap = SKBitmap.FromImage(image);
+
+                var pixmap = new SKPixmap(bitmap.Info, bitmap.GetPixels());
+                SKRectI rectI = new SKRectI(0, 0, width, height);
+                var subset = pixmap.ExtractSubset(rectI);
+                var data = subset.Encode(SKEncodedImageFormat.Png, 100);
+                return string.Format("data:image/png;base64,{0}", Convert.ToBase64String(data.ToArray()));
+            }
         }
 
         private static string RenderQRCode(string data, int size)
@@ -62,12 +77,12 @@ namespace SnipeLabelEditor.Data
             return html;
         }
 
-        public static string RenderLabel(string html)
+        public static string RenderLabel(string html, int height, int width)
         {
-            return RenderLabel(html, null);
+            return RenderLabel(html, height, width, null);
         }
 
-        public static string RenderLabel(string html, Dictionary<string, string> fields)
+        public static string RenderLabel(string html, int height, int width, Dictionary<string, string> fields)
         {
             if(fields != null)
             {
@@ -110,13 +125,13 @@ namespace SnipeLabelEditor.Data
                 {
                     try
                     {
-                        int width = Convert.ToInt32(item.Attributes["width"]?.Value);
-                        int height = Convert.ToInt32(item.Attributes["height"]?.Value);
+                        int barcodewidth = Convert.ToInt32(item.Attributes["width"]?.Value);
+                        int barcodeheight = Convert.ToInt32(item.Attributes["height"]?.Value);
                         bool includeLabel = Convert.ToBoolean(item.Attributes["includelabel"]?.Value);
                         int fontsize = Convert.ToInt32(item.Attributes["fontsize"]?.Value);
                         string fontfamily = Convert.ToString(item.Attributes["fontfamily"]?.Value);
                         string codetype = Convert.ToString(item.Attributes["codetype"]?.Value);
-                        var barcode = HTMLToImage.RenderBarcode(item.InnerText, width, height, includeLabel, fontsize, fontfamily, codetype);
+                        var barcode = HTMLToImage.RenderBarcode(item.InnerText, barcodewidth, barcodeheight, includeLabel, fontsize, fontfamily, codetype);
                         var imagenode = HtmlNode.CreateNode($"<img src=\"{barcode}\">");
                         var parent = item.ParentNode;
                         parent.ReplaceChild(imagenode, item);
@@ -132,7 +147,7 @@ namespace SnipeLabelEditor.Data
             
             html = htmlDocument.DocumentNode.OuterHtml;
 
-            string imageBase64String = RenderImageAsBase64(html);
+            string imageBase64String = RenderImageAsBase64(html, height, width);
 
             return imageBase64String;
         }

@@ -13,5 +13,8 @@ namespace SnipeLabelEditor.Models
         public string HTML { get; set; } = string.Empty;
 
         public string ImageBaseString { get; set; } = string.Empty;
+
+        public int Height { get; set; }
+        public int Width { get; set; }
     }
 }
