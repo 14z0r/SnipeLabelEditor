@@ -27,7 +27,8 @@
         <div class="col">
             <button class="btn btn-success" @onclick="SaveLabel">Save</button>
             <button class="btn btn-primary" @onclick="RenderImage">Reload label</button>
-            <button class="btn btn-primary" onclick="PrintImage('@imageDataURL'); return false;">Print</button>
+            <button class="btn btn-primary" onclick="PrintImage('@imageDataURL'); return false;">Print as Image</button>
+            <button class="btn btn-primary" onclick="PrintPDF('@pdfDataURL'); return false;">Print as PDF</button>
         </div>
     </div>
     <hr />
@@ -36,6 +37,15 @@
             <div style="display: flex; justify-content: center">
                 <div id="PrintDiv" style="border-style: dotted; display: inline-block;">
                     <img id="labelimage" src="@imageDataURL"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div style="display: flex; justify-content: center">
+                <div id="PrintDiv" style="border-style: dotted; display: inline-block;">
+                    <embed id="pdfrendered" type="application/pdf" src="@pdfDataURL" width="@label.Width" height="@label.Height"/>
                 </div>
             </div>
         </div>
@@ -95,11 +105,13 @@
     }
 
     string imageDataURL = string.Empty;
+    string pdfDataURL = string.Empty;
 
     private async Task RenderImage()
     {
         string html = await _editor.GetValue();
         imageDataURL = HTMLToImage.RenderLabel(html, label.Height, label.Width,_assetSelector.JsonFields);
+        pdfDataURL = HTMLToImage.RenderLabelPDF(html, label.Height, label.Width, _assetSelector.JsonFields);
     }
 
     private async Task SaveLabel()

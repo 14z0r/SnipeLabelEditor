@@ -1,6 +1,7 @@
 ﻿using BarcodeStandard;
 using CoreHtmlToImage;
 using HtmlAgilityPack;
+using HTMLconvert;
 using QRCoder;
 using SkiaSharp;
 using static QRCoder.Base64QRCode;
@@ -12,11 +13,12 @@ namespace SnipeLabelEditor.Data
         private static HtmlConverter _converter = new HtmlConverter();
         private static QRCodeGenerator _generator = new QRCodeGenerator();
         private static Barcode _barcode = new Barcode();
+        private static HTMLconvert.Converter _pdfConverter = new HTMLconvert.Converter(new PdfTools(useGraphics: false));
 
         private static string RenderImageAsBase64(string html, int height, int width)
         {
             html = $"<div style=\"margin: -8px -8px -8px -8px;\"> {html} </div>";
-            var bytes = _converter.FromHtmlString(html, 50, ImageFormat.Png, 100);
+            var bytes = _converter.FromHtmlString(html, 50, CoreHtmlToImage.ImageFormat.Png, 100);
 
             if (height <= 0 || width <= 0)
             {
@@ -33,6 +35,23 @@ namespace SnipeLabelEditor.Data
                 var data = subset.Encode(SKEncodedImageFormat.Png, 100);
                 return string.Format("data:image/png;base64,{0}", Convert.ToBase64String(data.ToArray()));
             }
+        }
+
+        private static string RenderPDFAsBase64(string html, int height, int width)
+        {
+            html = $"<div style=\"margin: -8px -8px -8px -8px;\"> {html} </div>";
+
+            var settings = new PdfSettings();
+            
+            var bytes = _pdfConverter.Convert(settings, html);
+
+            if (height > 0 || width > 0)
+            {
+                settings.PaperSize = new HTMLconvert.Core.PaperSize(width.ToString(), height.ToString());
+                bytes = _pdfConverter.Convert(settings, html);
+            }
+
+            return string.Format("data:application/pdf;base64,{0}", Convert.ToBase64String(bytes));
         }
 
         private static string RenderQRCode(string data, int size)
@@ -150,6 +169,76 @@ namespace SnipeLabelEditor.Data
             string imageBase64String = RenderImageAsBase64(html, height, width);
 
             return imageBase64String;
+        }
+
+        public static string RenderLabelPDF(string html, int height, int width, Dictionary<string, string> fields)
+        {
+            if (fields != null)
+            {
+                html = ReplaceVariabels(html, fields);
+            }
+
+            HtmlDocument htmlDocument = new HtmlDocument();
+            htmlDocument.LoadHtml(html);
+
+            //Render QRcodes
+            var qrcodenodes = htmlDocument.DocumentNode.SelectNodes("//qrcode");
+            if (qrcodenodes != null)
+            {
+                foreach (var item in qrcodenodes)
+                {
+                    try
+                    {
+                        var qrcode = HTMLToImage.RenderQRCode(item.InnerText, Convert.ToInt32(item.Attributes["size"]?.Value));
+                        var imagenode = HtmlNode.CreateNode($"<img src=\"{qrcode}\">");
+
+                        var parent = item.ParentNode;
+                        parent.ReplaceChild(imagenode, item);
+                    }
+                    catch (Exception ex)
+                    {
+                        var errornode = HtmlNode.CreateNode($"<p style=\"color:red\">{ex.Message}</p>");
+                        var parent = item.ParentNode;
+                        parent.ReplaceChild(errornode, item);
+                    }
+
+                }
+            }
+
+
+            //Render barcodes
+            var barcodenodes = htmlDocument.DocumentNode.SelectNodes("//barcode");
+            if (barcodenodes != null)
+            {
+                foreach (var item in barcodenodes)
+                {
+                    try
+                    {
+                        int barcodewidth = Convert.ToInt32(item.Attributes["width"]?.Value);
+                        int barcodeheight = Convert.ToInt32(item.Attributes["height"]?.Value);
+                        bool includeLabel = Convert.ToBoolean(item.Attributes["includelabel"]?.Value);
+                        int fontsize = Convert.ToInt32(item.Attributes["fontsize"]?.Value);
+                        string fontfamily = Convert.ToString(item.Attributes["fontfamily"]?.Value);
+                        string codetype = Convert.ToString(item.Attributes["codetype"]?.Value);
+                        var barcode = HTMLToImage.RenderBarcode(item.InnerText, barcodewidth, barcodeheight, includeLabel, fontsize, fontfamily, codetype);
+                        var imagenode = HtmlNode.CreateNode($"<img src=\"{barcode}\">");
+                        var parent = item.ParentNode;
+                        parent.ReplaceChild(imagenode, item);
+                    }
+                    catch (Exception ex)
+                    {
+                        var errornode = HtmlNode.CreateNode($"<p style=\"color:red\">{ex.Message}</p>");
+                        var parent = item.ParentNode;
+                        parent.ReplaceChild(errornode, item);
+                    }
+                }
+            }
+
+            html = htmlDocument.DocumentNode.OuterHtml;
+
+            string pdfBase64String = RenderPDFAsBase64(html, height, width);
+
+            return pdfBase64String;
         }
     }
 }
