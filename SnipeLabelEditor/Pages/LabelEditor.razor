@@ -110,14 +110,14 @@
     private async Task RenderImage()
     {
         string html = await _editor.GetValue();
-        imageDataURL = HTMLToImage.RenderLabel(html, label.Height, label.Width,_assetSelector.JsonFields);
-        pdfDataURL = HTMLToImage.RenderLabelPDF(html, label.Height, label.Width, _assetSelector.JsonFields);
+        imageDataURL = HtmlConverterImagePDF.RenderLabel(html, label.Height, label.Width,_assetSelector.JsonFields);
+        pdfDataURL = HtmlConverterImagePDF.RenderLabelPDF(html, label.Height, label.Width, _assetSelector.JsonFields);
     }
 
     private async Task SaveLabel()
     {
         label.HTML = await _editor.GetValue();
-        label.ImageBaseString = HTMLToImage.RenderLabel(label.HTML, label.Height, label.Width);
+        label.ImageBaseString = HtmlConverterImagePDF.RenderLabel(label.HTML, label.Height, label.Width);
 
         if (dbContext.Labels.FirstOrDefault(x => x.Id == label.Id) != null)
         {

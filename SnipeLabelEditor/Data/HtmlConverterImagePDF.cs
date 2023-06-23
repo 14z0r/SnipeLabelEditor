@@ -1,24 +1,23 @@
 ﻿using BarcodeStandard;
 using CoreHtmlToImage;
 using HtmlAgilityPack;
-using HTMLconvert;
 using QRCoder;
 using SkiaSharp;
 using static QRCoder.Base64QRCode;
 
 namespace SnipeLabelEditor.Data
 {
-    public static class HTMLToImage
+    public static class HtmlConverterImagePDF
     {
-        private static HtmlConverter _converter = new HtmlConverter();
+        private static CoreHtmlToImage.HtmlConverter _imageConverter = new CoreHtmlToImage.HtmlConverter();
+        private static CoreHtmlToPDF.HtmlConverter _pdfConverter = new CoreHtmlToPDF.HtmlConverter();
         private static QRCodeGenerator _generator = new QRCodeGenerator();
         private static Barcode _barcode = new Barcode();
-        private static HTMLconvert.Converter _pdfConverter = new HTMLconvert.Converter(new PdfTools(useGraphics: false));
 
         private static string RenderImageAsBase64(string html, int height, int width)
         {
             html = $"<div style=\"margin: -8px -8px -8px -8px;\"> {html} </div>";
-            var bytes = _converter.FromHtmlString(html, 50, CoreHtmlToImage.ImageFormat.Png, 100);
+            var bytes = _imageConverter.FromHtmlString(html, 50, CoreHtmlToImage.ImageFormat.Png, 100);
 
             if (height <= 0 || width <= 0)
             {
@@ -41,15 +40,7 @@ namespace SnipeLabelEditor.Data
         {
             html = $"<div style=\"margin: -8px -8px -8px -8px;\"> {html} </div>";
 
-            var settings = new PdfSettings();
-            
-            var bytes = _pdfConverter.Convert(settings, html);
-
-            if (height > 0 || width > 0)
-            {
-                settings.PaperSize = new HTMLconvert.Core.PaperSize(width.ToString(), height.ToString());
-                bytes = _pdfConverter.Convert(settings, html);
-            }
+            var bytes = _pdfConverter.FromHtmlString(html, width, height);
 
             return string.Format("data:application/pdf;base64,{0}", Convert.ToBase64String(bytes));
         }
@@ -119,7 +110,7 @@ namespace SnipeLabelEditor.Data
                 {
                     try
                     {
-                        var qrcode = HTMLToImage.RenderQRCode(item.InnerText, Convert.ToInt32(item.Attributes["size"]?.Value));
+                        var qrcode = HtmlConverterImagePDF.RenderQRCode(item.InnerText, Convert.ToInt32(item.Attributes["size"]?.Value));
                         var imagenode = HtmlNode.CreateNode($"<img src=\"{qrcode}\">");
 
                         var parent = item.ParentNode;
@@ -150,7 +141,7 @@ namespace SnipeLabelEditor.Data
                         int fontsize = Convert.ToInt32(item.Attributes["fontsize"]?.Value);
                         string fontfamily = Convert.ToString(item.Attributes["fontfamily"]?.Value);
                         string codetype = Convert.ToString(item.Attributes["codetype"]?.Value);
-                        var barcode = HTMLToImage.RenderBarcode(item.InnerText, barcodewidth, barcodeheight, includeLabel, fontsize, fontfamily, codetype);
+                        var barcode = HtmlConverterImagePDF.RenderBarcode(item.InnerText, barcodewidth, barcodeheight, includeLabel, fontsize, fontfamily, codetype);
                         var imagenode = HtmlNode.CreateNode($"<img src=\"{barcode}\">");
                         var parent = item.ParentNode;
                         parent.ReplaceChild(imagenode, item);
@@ -189,7 +180,7 @@ namespace SnipeLabelEditor.Data
                 {
                     try
                     {
-                        var qrcode = HTMLToImage.RenderQRCode(item.InnerText, Convert.ToInt32(item.Attributes["size"]?.Value));
+                        var qrcode = HtmlConverterImagePDF.RenderQRCode(item.InnerText, Convert.ToInt32(item.Attributes["size"]?.Value));
                         var imagenode = HtmlNode.CreateNode($"<img src=\"{qrcode}\">");
 
                         var parent = item.ParentNode;
@@ -220,7 +211,7 @@ namespace SnipeLabelEditor.Data
                         int fontsize = Convert.ToInt32(item.Attributes["fontsize"]?.Value);
                         string fontfamily = Convert.ToString(item.Attributes["fontfamily"]?.Value);
                         string codetype = Convert.ToString(item.Attributes["codetype"]?.Value);
-                        var barcode = HTMLToImage.RenderBarcode(item.InnerText, barcodewidth, barcodeheight, includeLabel, fontsize, fontfamily, codetype);
+                        var barcode = HtmlConverterImagePDF.RenderBarcode(item.InnerText, barcodewidth, barcodeheight, includeLabel, fontsize, fontfamily, codetype);
                         var imagenode = HtmlNode.CreateNode($"<img src=\"{barcode}\">");
                         var parent = item.ParentNode;
                         parent.ReplaceChild(imagenode, item);
