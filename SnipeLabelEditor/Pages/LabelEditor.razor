@@ -43,9 +43,9 @@
     </div>
     <div class="row">
         <div class="col">
-            <div style="display: flex; justify-content: center">
+            <div style="display: flex; justify-content: center;">
                 <div id="PrintDiv" style="border-style: dotted; display: inline-block;">
-                    <embed id="pdfrendered" type="application/pdf" src="@pdfDataURL" width="@label.Width" height="@label.Height"/>
+                    <embed id="pdfrendered" type="application/pdf" src="@(pdfDataURL + "#view=FitH")" style="width: @((label.Width + 5) + "mm"); height: @((label.Height + 5) + "mm"); overflow: hidden" />
                 </div>
             </div>
         </div>
