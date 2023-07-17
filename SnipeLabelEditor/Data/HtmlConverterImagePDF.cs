@@ -36,13 +36,15 @@ namespace SnipeLabelEditor.Data
             }
         }
 
-        private static string RenderPDFAsBase64(string html, int height, int width)
+        private static string RenderPDFAsBase64(string html, int height, int width, out string onlyBaseString)
         {
             html = $"<div style=\"margin: -8px -8px -8px -8px;\"> {html} </div>";
 
             var bytes = _pdfConverter.FromHtmlString(html, width, height);
 
-            return string.Format("data:application/pdf;base64,{0}", Convert.ToBase64String(bytes));
+            onlyBaseString = Convert.ToBase64String(bytes);
+
+            return string.Format("data:application/pdf;base64,{0}", onlyBaseString);
         }
 
         private static string RenderQRCode(string data, int size)
@@ -87,12 +89,7 @@ namespace SnipeLabelEditor.Data
             return html;
         }
 
-        public static string RenderLabel(string html, int height, int width)
-        {
-            return RenderLabel(html, height, width, null);
-        }
-
-        public static string RenderLabel(string html, int height, int width, Dictionary<string, string> fields)
+        public static string RenderLabel(string html, int heightpx, int widthpx, Dictionary<string, string> fields)
         {
             if(fields != null)
             {
@@ -157,12 +154,12 @@ namespace SnipeLabelEditor.Data
             
             html = htmlDocument.DocumentNode.OuterHtml;
 
-            string imageBase64String = RenderImageAsBase64(html, height, width);
+            string imageBase64String = RenderImageAsBase64(html, heightpx, widthpx);
 
             return imageBase64String;
         }
 
-        public static string RenderLabelPDF(string html, int height, int width, Dictionary<string, string> fields)
+        public static string RenderLabelPDF(string html, int heightmm, int widthmm, Dictionary<string, string> fields, out string onlyBaseString)
         {
             if (fields != null)
             {
@@ -227,7 +224,7 @@ namespace SnipeLabelEditor.Data
 
             html = htmlDocument.DocumentNode.OuterHtml;
 
-            string pdfBase64String = RenderPDFAsBase64(html, height, width);
+            string pdfBase64String = RenderPDFAsBase64(html, heightmm, widthmm, out onlyBaseString);
 
             return pdfBase64String;
         }

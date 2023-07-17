@@ -1,8 +1,8 @@
 ﻿@page "/labeleditor"
 @page "/labeleditor/{LabelId:int}"
-@using HtmlAgilityPack;
 @inject IToastService toastService
 @inject LabelsDBContext dbContext
+@inject IJSRuntime JS
 
 <div class="container">
     <div class="row">
@@ -14,47 +14,118 @@
         </div>
         <div class="col">
             <div class="input-group mb-3">
-                <span class="input-group-text">Height</span>
-                <input class="form-control" @bind-value="label.Height"/>
-                <span class="input-group-text">px</span>
-            </div>
-            <div class="input-group mb-3">
-                <span class="input-group-text">Width</span>
-                <input class="form-control" @bind-value="label.Width"/>
-                <span class="input-group-text">px</span>
+                <span class="input-group-text">Format</span>
+                <select class="form-select" @bind="selectedFormat" @onselectionchange="OnPageLoaded">
+                    @foreach (var item in formatoptions)
+                    {
+                        if (formatoptions.IndexOf(item) == 0)
+                        {
+                            <option value="@item" selected>@item</option>
+                        }
+                        else
+                        {
+                            <option value="@item">@item</option>
+                        }
+                    }
+                </select>
             </div>
         </div>
         <div class="col">
             <button class="btn btn-success" @onclick="SaveLabel">Save</button>
-            <button class="btn btn-primary" @onclick="RenderImage">Reload label</button>
-            <button class="btn btn-primary" onclick="PrintImage('@imageDataURL'); return false;">Print as Image</button>
-            <button class="btn btn-primary" onclick="PrintPDF('@pdfDataURL'); return false;">Print as PDF</button>
         </div>
     </div>
     <hr />
     <div class="row">
-        <div class="col">
-            <div style="display: flex; justify-content: center">
-                <div id="PrintDiv" style="border-style: dotted; display: inline-block;">
-                    <img id="labelimage" src="@imageDataURL"/>
+        @switch(selectedFormat)
+        {
+            case "PDF":
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Height</span>
+                            <input class="form-control" @bind-value="label.HeightMm" />
+                            <span class="input-group-text">mm</span>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Width</span>
+                            <input class="form-control" @bind-value="label.WidthMm" />
+                            <span class="input-group-text">mm</span>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-3">
+                            @if (!string.IsNullOrEmpty(pdfDataURL))
+                            {
+                                <button onclick="PrintPDFBase64('@pdfBaseString')" class="btn btn-lg btn-primary oi oi-print me-2"></button>
+                            }
+                            <button class="btn btn-primary" @onclick="RenderPDF">Reload label</button>
+                        </div>
+                        <div class="mb-3">
+                            <button class="btn btn-primary" @onclick="CalcMmFromPx">Calc mm from px</button>
+                        </div>
+                    </div>
+                    
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <div style="display: flex; justify-content: center;">
-                <div id="PrintDiv" style="border-style: dotted; display: inline-block;">
-                    <embed id="pdfrendered" type="application/pdf" src="@(pdfDataURL + "#view=FitH")" style="width: @((label.Width + 5) + "mm"); height: @((label.Height + 5) + "mm"); overflow: hidden" />
+                <hr />
+                <div class="row">
+                    <div class="col">
+                        @if (string.IsNullOrEmpty(pdfDataURL))
+                        {
+                            <Loading DisplayText="Generatin PDF"></Loading>
+                        }
+                        else
+                        {
+                            <div style="display: flex; justify-content: center;">
+                                <div id="PrintDiv" style="display: inline-block; width: 100%">
+                                    <embed type="application/pdf" src="@(pdfDataURL + "#toolbar=1")" style="width: 100%; height: @((label.HeightMm + 30) + "mm"); overflow: hidden"/>
+                                </div>
+                            </div>
+                        }
+                    </div>
                 </div>
-            </div>
-        </div>
+                break;
+            case "PNG":
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Height</span>
+                            <input class="form-control" @bind-value="label.HeightPx" />
+                            <span class="input-group-text">px</span>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Width</span>
+                            <input class="form-control" @bind-value="label.WidthPx" />
+                            <span class="input-group-text">px</span>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-3">
+                            <button class="btn btn-primary" @onclick="RenderImage">Reload label</button>
+                            <button class="btn btn-primary" onclick="Printing('@imageDataURL'); return false;">Print as Image</button>
+                        </div>
+                        <div class="mb-3">
+                            <button class="btn btn-primary" @onclick="CalcPxFromMm">Calc px from mm</button>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col">
+                        <div style="display: flex; justify-content: center">
+                            <div id="PrintDiv" style="border-style: dotted; display: inline-block;">
+                                <img id="labelimage" src="@imageDataURL" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                break;
+        }
     </div>
     <hr />
     <div class="row">
         <div class="col-8">
             <div class="mt-2">
-                <StandaloneCodeEditor @ref="_editor" CssClass="monaco-editor-container" ConstructionOptions="EditorConstructionOptions" OnDidChangeModelContent="RenderImage" OnDidInit="RenderImage" />
+                <StandaloneCodeEditor @ref="_editor" CssClass="monaco-editor-container" ConstructionOptions="EditorConstructionOptions" OnDidChangeModelContent="OnPageLoaded" OnDidInit="OnPageLoaded" />
             </div>
         </div>
         <div class="col-4">
@@ -94,6 +165,9 @@
         HTML = "<div style=\"width: 200px; height: 80px\">\n\n</div>"
     };
 
+    private List<string> formatoptions = new List<string> { "PDF", "PNG" };
+    private string selectedFormat = "PDF";
+
     private StandaloneEditorConstructionOptions EditorConstructionOptions(StandaloneCodeEditor editor)
     {
         return new StandaloneEditorConstructionOptions
@@ -106,18 +180,66 @@
 
     string imageDataURL = string.Empty;
     string pdfDataURL = string.Empty;
+    string pdfBaseString = string.Empty;
+
+    private void CalcPxFromMm()
+    {
+        if (label.WidthMm > 0)
+        {
+            label.WidthPx = Convert.ToInt32(PxMmConverter.MmToPx(label.WidthMm));
+        }
+
+        if (label.HeightMm > 0)
+        {
+            label.HeightPx = Convert.ToInt32(PxMmConverter.MmToPx(label.HeightMm));
+        }
+    }
+
+    private void CalcMmFromPx()
+    {
+        if (label.WidthPx > 0)
+        {
+            label.WidthMm = Convert.ToInt32(PxMmConverter.MmToPx(label.WidthPx));
+        }
+
+        if (label.HeightPx > 0)
+        {
+            label.HeightMm = Convert.ToInt32(PxMmConverter.MmToPx(label.HeightPx));
+        }
+    }
+
+    private async Task OnPageLoaded()
+    {
+        switch (selectedFormat)
+        {
+            case "PDF":
+                await RenderPDF();
+                break;
+            case "PNG":
+                await RenderImage();
+                break;
+        }
+    }
 
     private async Task RenderImage()
     {
         string html = await _editor.GetValue();
-        imageDataURL = HtmlConverterImagePDF.RenderLabel(html, label.Height, label.Width,_assetSelector.JsonFields);
-        pdfDataURL = HtmlConverterImagePDF.RenderLabelPDF(html, label.Height, label.Width, _assetSelector.JsonFields);
+
+        imageDataURL = HtmlConverterImagePDF.RenderLabel(html, label.HeightPx, label.WidthPx,_assetSelector.JsonFields);
+    }
+
+    private async Task RenderPDF()
+    {
+        string html = await _editor.GetValue();
+        pdfDataURL = HtmlConverterImagePDF.RenderLabel(html, label.HeightMm, label.WidthMm, _assetSelector.JsonFields);
+        pdfDataURL = HtmlConverterImagePDF.RenderLabelPDF(html, label.HeightMm, label.WidthMm, _assetSelector.JsonFields, out pdfBaseString);
     }
 
     private async Task SaveLabel()
     {
         label.HTML = await _editor.GetValue();
-        label.ImageBaseString = HtmlConverterImagePDF.RenderLabel(label.HTML, label.Height, label.Width);
+
+        label.ImageBaseString = HtmlConverterImagePDF.RenderLabel(label.HTML, label.HeightPx, label.WidthPx, null);
 
         if (dbContext.Labels.FirstOrDefault(x => x.Id == label.Id) != null)
         {

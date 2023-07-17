@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="BarcodeLib" Version="3.0.0" />
+    <PackageReference Include="CoreHtmlToPDF" Version="1.0.0" />
 	<PackageReference Include="SkiaSharp" Version="2.88.3" />
 	<PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.88.3" />
 	<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.3" />
@@ -27,7 +28,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\repos\CoreHtmlToPDF\CoreHtmlToPDF\CoreHtmlToPDF.csproj" />
+    <_ContentIncludedByDefault Remove="wwwroot\print-js\print.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\print-js\print.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\print-js\print.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\print-js\print.min.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\print-js\print.min.js" />
   </ItemGroup>
 
 </Project>

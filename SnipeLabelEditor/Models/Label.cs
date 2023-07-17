@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SnipeLabelEditor.Data;
+using System.ComponentModel.DataAnnotations;
 
 namespace SnipeLabelEditor.Models
 {
@@ -12,9 +13,25 @@ namespace SnipeLabelEditor.Models
 
         public string HTML { get; set; } = string.Empty;
 
-        public string ImageBaseString { get; set; } = string.Empty;
+        private string imageBaseString = "";
+        public string ImageBaseString 
+        { 
+            get 
+            {
+                if (string.IsNullOrEmpty(imageBaseString))
+                {
+                    imageBaseString = HtmlConverterImagePDF.RenderLabel(HTML, HeightPx, WidthPx, null);
+                }
+                return imageBaseString;
+            } 
+            set => imageBaseString = value;
+        }
+        public int HeightPx { get; set; }
 
-        public int Height { get; set; }
-        public int Width { get; set; }
+        public int WidthPx { get; set; }
+
+        public int HeightMm { get; set; }
+
+        public int WidthMm { get; set; }
     }
 }

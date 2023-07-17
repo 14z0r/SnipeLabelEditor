@@ -10,6 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="~/" />
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="printjs/print.min.css">
     <link href="css/site.css" rel="stylesheet" />
     <link href="SnipeLabelEditor.styles.css" rel="stylesheet" />
     <link rel="icon" type="image/png" href="favicon.png"/>
@@ -29,10 +30,12 @@
         <a class="dismiss">🗙</a>
     </div>
 
+    <script src="~/printjs/print.min.js"></script>
     <script src="_content/BlazorMonaco/jsInterop.js"></script>
     <script src="_content/BlazorMonaco/lib/monaco-editor/min/vs/loader.js"></script>
     <script src="_content/BlazorMonaco/lib/monaco-editor/min/vs/editor/editor.main.js"></script>
     <script src="_framework/blazor.server.js"></script>
-    <script src="~/printimage.js"></script>
+    <script src="~/printing.js"></script>
+    <script src="pdfjs/pdf.js"></script>
 </body>
 </html>

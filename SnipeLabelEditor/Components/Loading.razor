@@ -1,0 +1,12 @@
+﻿@page "/loading"
+<div cclass="d-flex align-items-center">
+    <div class="spinner-border text-primary" role="status"></div>
+    <div class="align-middle">@DisplayText</div>
+</div>
+
+
+@code
+{
+    [Parameter]
+    public string DisplayText { get; set; } = string.Empty;
+}

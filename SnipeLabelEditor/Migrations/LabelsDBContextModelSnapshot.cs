@@ -26,7 +26,10 @@ namespace SnipeLabelEditor.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Height")
+                    b.Property<int>("HeightMm")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("HeightPx")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("ImageBaseString")
@@ -37,7 +40,10 @@ namespace SnipeLabelEditor.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Width")
+                    b.Property<int>("WidthMm")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("WidthPx")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
