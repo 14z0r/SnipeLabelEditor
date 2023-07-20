@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "print-js@1.6.0",
+      "destination": "wwwroot/print-js/"
+    }
+  ]
+}
