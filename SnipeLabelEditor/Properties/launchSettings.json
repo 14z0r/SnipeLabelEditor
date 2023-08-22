@@ -1,5 +1,29 @@
 {
-  "profiles": {
+  "profiles": {   
+    "Watch": {     
+      "commandName": "Executable",     
+      "executablePath": "dotnet",     
+      "workingDirectory": "$(ProjectDir)",     
+      "hotReloadEnabled": true,     
+      "hotReloadProfile" : "aspnetcore",     
+      "commandLineArgs": "watch run",     
+      "launchBrowser": true,     
+      "environmentVariables": {       
+        "ASPNETCORE_ENVIRONMENT": "Development"     }   },
+    "http2": {
+      "commandName": "Project",
+      "executablePath": "dotnet",
+      "workingDirectory": "$(ProjectDir)",
+      "hotReloadEnabled": true,
+      "hotReloadProfile" : "aspnetcore",
+      "commandLineArgs": "watch run",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://bp2vcl3.it.kontinent.intern:80"
+    },
     "http": {
       "commandName": "Project",
       "launchBrowser": true,

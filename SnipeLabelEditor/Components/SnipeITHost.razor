@@ -1,0 +1,20 @@
+﻿@inject IJSRuntime JS
+@inject IConfiguration Configuration
+
+<iframe id="snipeITiframe" src="http://snipe.it.kontinent.intern/hardware" width="100%"></iframe>
+
+
+@code {
+    private string _currentURL = "";
+    
+    public string CurrentURL
+    {
+        get => _currentURL;
+    }
+    
+    private async Task currentURL()
+    {
+        var url = await JS.InvokeAsync<string>("GetCurrentURL", "snipeITiframe");
+        _currentURL = url;
+    }
+}

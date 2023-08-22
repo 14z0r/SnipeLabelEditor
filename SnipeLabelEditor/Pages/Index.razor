@@ -26,9 +26,13 @@
         }
     }
 </div>
-
+<SnipeITHost></SnipeITHost>
 
 @code {
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    
+    SnipeITHost _host;
+    
     protected override async Task OnInitializedAsync()
     {
         _labels = await dbContext.Labels.ToListAsync();

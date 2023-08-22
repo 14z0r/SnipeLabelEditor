@@ -1,3 +1,4 @@
+using Blazored.Modal;
 using Blazored.Toast;
 using Microsoft.EntityFrameworkCore;
 using SnipeLabelEditor.Data;
@@ -15,6 +16,7 @@ namespace SnipeLabelEditor
             builder.Services.AddServerSideBlazor();
 
             builder.Services.AddBlazoredToast();
+            builder.Services.AddBlazoredModal();
 
             builder.Services.AddDbContextFactory<LabelsDBContext>(opt =>
                     opt.UseSqlite($"Data Source={Path.Combine(Environment.CurrentDirectory, "labels.db")}"));
