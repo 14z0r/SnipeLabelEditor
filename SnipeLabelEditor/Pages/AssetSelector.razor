@@ -1,23 +1,17 @@
 ﻿@page "/assetselector"
 @inject IToastService toastService
 
-<div class="input-group">
-    <span class="input-group-text">Asset-Id</span>
-    <input class="form-control" @bind-value="_assetId" />
-    <button class="btn btn-primary" @onclick="SelectAsset">GO!</button>
-</div>
-
-<hr />
-
-<div class="overflow-auto" style="max-height: 640px">
-    <table class="table table-striped">
-        <thead>
+@if (IsVisible)
+{
+    <div class="overflow-auto" style="max-height: 640px">
+        <table class="table table-striped">
+            <thead>
             <tr>
-                <th>Name of Field</th>
+                <th>Variable</th>
                 <th>Value</th>
             </tr>
-        </thead>
-        <tbody>
+            </thead>
+            <tbody>
             @foreach (var item in JsonFields)
             {
                 <tr>
@@ -25,20 +19,32 @@
                     <td>@item.Value</td>
                 </tr>
             }
-        </tbody>
-    </table>
-</div>
+            </tbody>
+        </table>
+    </div>
+}
 
 @code {
-    private string _assetId { get; set; } = string.Empty;
+    private bool _isVisible = true;
+
+    [Parameter]
+    public bool IsVisible
+    {
+        get => _isVisible;
+        set
+        {
+            _isVisible = value; 
+            StateHasChanged();
+        }
+    }
 
     public Dictionary<string, string> JsonFields = new Dictionary<string, string>();
 
-    private async Task SelectAsset()
+    public async Task SetAsset(int id)
     {
         try
         {
-            string jsonstring = await Globals.SnipeIT.GetStringAsync($"hardware/{_assetId}");
+            string jsonstring = await Globals.SnipeIT.GetStringAsync($"hardware/{id}");
 
             var node = JsonStringToJsonNode(jsonstring);
 

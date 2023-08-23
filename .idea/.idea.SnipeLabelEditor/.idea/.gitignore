@@ -2,8 +2,8 @@
 /shelf/
 /workspace.xml
 # Rider ignored files
-/modules.xml
 /contentModel.xml
+/modules.xml
 /projectSettingsUpdater.xml
 /.idea.SnipeLabelEditor.iml
 # Editor-based HTTP Client requests

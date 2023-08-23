@@ -28,6 +28,10 @@
                         }
                     }
                 </select>
+                <select class="form-select" @bind="selectedUnit" @onselectionchange="OnPageLoaded">
+                    <option value="mm" selected>mm</option>
+                    <option value="px" selected>pixel</option>
+                </select>
             </div>
         </div>
         <div class="col">
@@ -35,23 +39,41 @@
         </div>
     </div>
     <hr />
-    <div class="row">
-        @switch(selectedFormat)
+        @switch (selectedUnit)
+        {
+            case "mm":
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Height</span>
+                        <input class="form-control" @bind-value="label.HeightMm"/>
+                        <span class="input-group-text">mm</span>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Width</span>
+                        <input class="form-control" @bind-value="label.WidthMm"/>
+                        <span class="input-group-text">mm</span>
+                    </div>
+                </div>
+            break;
+            case "px":
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Height</span>
+                        <input class="form-control" @bind-value="label.HeightPx"/>
+                        <span class="input-group-text">px</span>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Width</span>
+                        <input class="form-control" @bind-value="label.WidthPx"/>
+                        <span class="input-group-text">px</span>
+                    </div>
+                </div>
+            break;
+        }
+        @switch (selectedFormat)
         {
             case "PDF":
                 <div class="row">
-                    <div class="col">
-                        <div class="input-group mb-3">
-                            <span class="input-group-text">Height</span>
-                            <input class="form-control" @bind-value="label.HeightMm" />
-                            <span class="input-group-text">mm</span>
-                        </div>
-                        <div class="input-group mb-3">
-                            <span class="input-group-text">Width</span>
-                            <input class="form-control" @bind-value="label.WidthMm" />
-                            <span class="input-group-text">mm</span>
-                        </div>
-                    </div>
                     <div class="col">
                         <div class="mb-3">
                             @if (!string.IsNullOrEmpty(pdfDataURL))
@@ -60,13 +82,9 @@
                             }
                             <button class="btn btn-primary" @onclick="RenderPDF">Reload label</button>
                         </div>
-                        <div class="mb-3">
-                            <button class="btn btn-primary" @onclick="CalcMmFromPx">Calc mm from px</button>
-                        </div>
                     </div>
-                    
                 </div>
-                <hr />
+                <hr/>
                 <div class="row">
                     <div class="col">
                         @if (string.IsNullOrEmpty(pdfDataURL))
@@ -83,44 +101,28 @@
                         }
                     </div>
                 </div>
-                break;
+            break;
             case "PNG":
                 <div class="row">
-                    <div class="col">
-                        <div class="input-group mb-3">
-                            <span class="input-group-text">Height</span>
-                            <input class="form-control" @bind-value="label.HeightPx" />
-                            <span class="input-group-text">px</span>
-                        </div>
-                        <div class="input-group mb-3">
-                            <span class="input-group-text">Width</span>
-                            <input class="form-control" @bind-value="label.WidthPx" />
-                            <span class="input-group-text">px</span>
-                        </div>
-                    </div>
                     <div class="col">
                         <div class="mb-3">
                             <button class="btn btn-primary" @onclick="RenderImage">Reload label</button>
                             <button class="btn btn-primary" onclick="PrintPNGBase64('@imageDataURL'); return false;">Print as Image</button>
                         </div>
-                        <div class="mb-3">
-                            <button class="btn btn-primary" @onclick="CalcPxFromMm">Calc px from mm</button>
-                        </div>
                     </div>
                 </div>
-                <hr />
+                <hr/>
                 <div class="row">
                     <div class="col">
                         <div style="display: flex; justify-content: center">
                             <div id="PrintDiv" style="border-style: dotted; display: inline-block;">
-                                <img id="labelimage" src="@imageDataURL" />
+                                <img id="labelimage" src="@imageDataURL"/>
                             </div>
                         </div>
                     </div>
                 </div>
-                break;
+            break;
         }
-    </div>
     <hr />
     <div class="row">
         <div class="col-8">
@@ -167,6 +169,7 @@
 
     private List<string> formatoptions = new List<string> { "PDF", "PNG" };
     private string selectedFormat = "PDF";
+    private string selectedUnit = "mm";
 
     private StandaloneEditorConstructionOptions EditorConstructionOptions(StandaloneCodeEditor editor)
     {

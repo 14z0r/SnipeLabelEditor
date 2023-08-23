@@ -3,35 +3,24 @@
 @inject NavigationManager navigationManager
 
 <div class="container">
-    @if (_labels != null)
-    {
+    <label>Wählen Sie ein Label aus</label>
+    <div class="d-flex flex-wrap">
         @foreach (var item in _labels)
         {
-            <div class="card mb-3">
-                <div class="row g-0">
-                    <div class="col-md-4 rounded-start justify-content-center d-flex" style="background-color: lightgray">
-                        <img src="@item.ImageBaseString" style="object-fit: none">
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-body">
-                            <h5 class="card-title">@item.Name</h5>
-                            <div class="card-text">
-                                <button class="btn btn-primary" @onclick="() => OpenEdit(item.Id)">Open/Edit</button>
-                                <button class="btn btn-danger" @onclick="() => Delete(item)">Delete</button>
-                            </div>
-                        </div>
-                    </div>
+            <button class="btn btn-outline-dark" @onclick="() => OpenLabel(item.Id)">
+                @item.Name
+                <div class="mb-2">
+                    <img class="border" src="@item.ImageBaseString"/>
                 </div>
-            </div>
+            </button>
         }
-    }
+    </div>
 </div>
-<SnipeITHost></SnipeITHost>
+
+
 
 @code {
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
-    
-    SnipeITHost _host;
     
     protected override async Task OnInitializedAsync()
     {
@@ -40,14 +29,8 @@
 
     private List<Label> _labels;
 
-    private void OpenEdit(int labelId)
+    private void OpenLabel(int id)
     {
-        navigationManager.NavigateTo($"/labeleditor/{labelId}");
-    }
-
-    private async Task Delete(Label label)
-    {
-        dbContext.Labels.Remove(label);
-        await dbContext.SaveChangesAsync();
+        navigationManager.NavigateTo($"labeleditor/{id}");
     }
 }
