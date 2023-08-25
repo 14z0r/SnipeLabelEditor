@@ -58,6 +58,8 @@
         {
             toastService.ShowError(ex.Message);
         }
+        
+        StateHasChanged();
     }
 
     private JsonNode JsonStringToJsonNode(string jsonstring)

@@ -89,7 +89,7 @@ namespace SnipeLabelEditor.Data
             return html;
         }
 
-        public static string RenderLabel(string html, int heightpx, int widthpx, Dictionary<string, string> fields)
+        public static string RenderLabel(string html, int heightpx, int widthpx, Dictionary<string, string>? fields)
         {
             if(fields != null)
             {
@@ -159,7 +159,7 @@ namespace SnipeLabelEditor.Data
             return imageBase64String;
         }
 
-        public static string RenderLabelPDF(string html, int heightmm, int widthmm, Dictionary<string, string> fields, out string onlyBaseString)
+        public static string RenderLabelPDF(string html, int heightmm, int widthmm, Dictionary<string, string>? fields, out string onlyBaseString)
         {
             if (fields != null)
             {

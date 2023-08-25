@@ -12,6 +12,8 @@ namespace SnipeLabelEditor
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddLocalization();
+
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
 
@@ -28,6 +30,7 @@ namespace SnipeLabelEditor
                         .AllowAnyHeader()
                         .AllowAnyMethod());
             });
+            
             var app = builder.Build();
 
             using (var serviceScope = app.Services.CreateScope())
@@ -43,6 +46,12 @@ namespace SnipeLabelEditor
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            var localizeOptions = new RequestLocalizationOptions()
+                .SetDefaultCulture("en-US")
+                .AddSupportedCultures("en-US", "de-DE");
+
+            app.UseRequestLocalization(localizeOptions);
 
             app.UseHttpsRedirection();
 

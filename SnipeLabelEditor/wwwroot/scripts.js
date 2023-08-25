@@ -2,7 +2,7 @@
 {
     printJS({
         printable: source,
-        type: 'png',
+        type: 'image',
         base64: true,
     }); 
 }

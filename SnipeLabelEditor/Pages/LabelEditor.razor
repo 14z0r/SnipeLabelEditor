@@ -1,24 +1,23 @@
 ﻿@page "/labeleditor"
 @page "/labeleditor/{LabelId:int}"
-@inject IToastService toastService
 @inject LabelsDBContext dbContext
-@inject IJSRuntime JS
+@inject IStringLocalizer<Resources> Localizer
 
-<div class="container">
+<div class="container mt-3">
     <div class="row">
         <div class="col">
             <div class="input-group mb-3">
-                <span class="input-group-text">Label name</span>
-                <input class="form-control" @bind-value="label.Name" placeholder="Label name here" />
+                <span class="input-group-text">@Localizer["name"]</span>
+                <input class="form-control" @bind-value="_label.Name"/>
             </div>
         </div>
         <div class="col">
             <div class="input-group mb-3">
-                <span class="input-group-text">Format</span>
-                <select class="form-select" @bind="selectedFormat" @onselectionchange="OnPageLoaded">
-                    @foreach (var item in formatoptions)
+                <span class="input-group-text">@Localizer["format"]</span>
+                <select class="form-select" @bind="SelectedFormat">
+                    @foreach (var item in _formatoptions)
                     {
-                        if (formatoptions.IndexOf(item) == 0)
+                        if (_formatoptions.IndexOf(item) == 0)
                         {
                             <option value="@item" selected>@item</option>
                         }
@@ -28,110 +27,126 @@
                         }
                     }
                 </select>
-                <select class="form-select" @bind="selectedUnit" @onselectionchange="OnPageLoaded">
-                    <option value="mm" selected>mm</option>
-                    <option value="px" selected>pixel</option>
+                <select class="form-select" @bind="_selectedUnit" @onselectionchange="RerenderLabel">
+                    @foreach (var item in _unitoptions)
+                    {
+                        if (_formatoptions.IndexOf(item) == 0)
+                        {
+                            <option value="@item" selected>@item</option>
+                        }
+                        else
+                        {
+                            <option value="@item">@item</option>
+                        }
+                    }
                 </select>
             </div>
         </div>
         <div class="col">
-            <button class="btn btn-success" @onclick="SaveLabel">Save</button>
+            <button class="btn btn-success" @onclick="SaveLabel">@Localizer["save"]</button>
         </div>
     </div>
     <hr />
-        @switch (selectedUnit)
-        {
-            case "mm":
-                <div class="col">
-                    <div class="input-group mb-3">
-                        <span class="input-group-text">Height</span>
-                        <input class="form-control" @bind-value="label.HeightMm"/>
-                        <span class="input-group-text">mm</span>
-                    </div>
-                    <div class="input-group mb-3">
-                        <span class="input-group-text">Width</span>
-                        <input class="form-control" @bind-value="label.WidthMm"/>
-                        <span class="input-group-text">mm</span>
-                    </div>
-                </div>
-            break;
-            case "px":
-                <div class="col">
-                    <div class="input-group mb-3">
-                        <span class="input-group-text">Height</span>
-                        <input class="form-control" @bind-value="label.HeightPx"/>
-                        <span class="input-group-text">px</span>
-                    </div>
-                    <div class="input-group mb-3">
-                        <span class="input-group-text">Width</span>
-                        <input class="form-control" @bind-value="label.WidthPx"/>
-                        <span class="input-group-text">px</span>
-                    </div>
-                </div>
-            break;
-        }
-        @switch (selectedFormat)
-        {
-            case "PDF":
-                <div class="row">
+    <div class="row">
+        @switch (_selectedUnit)
+            {
+                case "mm":
                     <div class="col">
-                        <div class="mb-3">
-                            @if (!string.IsNullOrEmpty(pdfDataURL))
-                            {
-                                <button onclick="PrintPDFBase64('@pdfBaseString')" class="btn btn-lg btn-primary oi oi-print me-2"></button>
-                            }
-                            <button class="btn btn-primary" @onclick="RenderPDF">Reload label</button>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">@Localizer["height"]</span>
+                            <input class="form-control" @bind-value="_label.HeightMm"/>
+                            <span class="input-group-text">mm</span>
                         </div>
                     </div>
-                </div>
-                <hr/>
-                <div class="row">
                     <div class="col">
-                        @if (string.IsNullOrEmpty(pdfDataURL))
-                        {
-                            <Loading DisplayText="Generatin PDF"></Loading>
-                        }
-                        else
-                        {
-                            <div style="display: flex; justify-content: center;">
-                                <div id="PrintDiv" style="display: inline-block; width: 100%">
-                                    <embed type="application/pdf" src="@(pdfDataURL + "#toolbar=1")" style="width: 100%; height: @((label.HeightMm + 30) + "mm"); overflow: hidden"/>
-                                </div>
-                            </div>
-                        }
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">@Localizer["width"]</span>
+                            <input class="form-control" @bind-value="_label.WidthMm"/>
+                            <span class="input-group-text">mm</span>
+                        </div>
                     </div>
+                break;
+                case "pixel":
+                    <div class="col">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">@Localizer["height"]</span>
+                            <input class="form-control" @bind-value="_label.HeightPx"/>
+                            <span class="input-group-text">px</span>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">@Localizer["width"]</span>
+                            <input class="form-control" @bind-value="_label.WidthPx"/>
+                            <span class="input-group-text">px</span>
+                        </div>
+                    </div>
+                break;
+            }
+            <div class="col">
+                <button class="btn btn-primary" @onclick="RerenderLabel">@Localizer["reloadLabel"]</button>
+            </div>
+    </div>
+    <hr/>
+    <div class="row">
+         @switch (_selectedFormat)
+        {
+            case "PDF":
+                <div class="col">
+                    @if (string.IsNullOrEmpty(_pdfDataUrl))
+                    {
+                        <Loading DisplayText="@Localizer["generatePdf"]"></Loading>
+                    }
+                    else
+                    {
+                        <div style="display: flex; justify-content: center;">
+                            <div id="PrintDiv" style="display: inline-block; width: 100%">
+                                <embed type="application/pdf" src="@(_pdfDataUrl + "#toolbar=1")" style="width: 100%; height: @((_label.HeightMm + 30) + "mm"); overflow: hidden"/>
+                            </div>
+                        </div>
+                    }
                 </div>
             break;
             case "PNG":
-                <div class="row">
-                    <div class="col">
-                        <div class="mb-3">
-                            <button class="btn btn-primary" @onclick="RenderImage">Reload label</button>
-                            <button class="btn btn-primary" onclick="PrintPNGBase64('@imageDataURL'); return false;">Print as Image</button>
-                        </div>
-                    </div>
-                </div>
-                <hr/>
-                <div class="row">
-                    <div class="col">
+                <div class="col">
+                    @if (string.IsNullOrEmpty(_pdfDataUrl))
+                    {
+                        <Loading DisplayText="@Localizer["generateImage"]"></Loading>
+                    }
+                    else
+                    {
                         <div style="display: flex; justify-content: center">
                             <div id="PrintDiv" style="border-style: dotted; display: inline-block;">
-                                <img id="labelimage" src="@imageDataURL"/>
+                                <img id="labelimage" src="@_imageDataUrl"/>
                             </div>
                         </div>
-                    </div>
+                    }
                 </div>
             break;
         }
+    </div>
     <hr />
     <div class="row">
         <div class="col-8">
             <div class="mt-2">
-                <StandaloneCodeEditor @ref="_editor" CssClass="monaco-editor-container" ConstructionOptions="EditorConstructionOptions" OnDidChangeModelContent="OnPageLoaded" OnDidInit="OnPageLoaded" />
+                <StandaloneCodeEditor @ref="_editor" CssClass="monaco-editor-container" ConstructionOptions="EditorConstructionOptions" OnDidChangeModelContent="RerenderLabel" OnDidInit="RerenderLabel" />
             </div>
         </div>
         <div class="col-4">
-            <AssetSelector @ref="_assetSelector"/>
+            <div class="row">
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">@Localizer["assetId"]</span>
+                        <input class="form-control" @bind="_assetId"/>
+                    </div>
+                </div>
+                <div class="col">
+                    <button class="btn btn-success" @onclick="RerenderLabel">@Localizer["apply"]</button>
+                </div>
+            </div>
+            <div class="row">
+                <AssetSelector @ref="_assetSelector"/>
+            </div>
         </div>
     </div>
 </div>
@@ -154,7 +169,7 @@
             var label = await dbContext.Labels.FirstOrDefaultAsync(x => x.Id == LabelId);
             if (label is not null)
             {
-                this.label = label;
+                _label = label;
             }
         }
     }
@@ -162,14 +177,32 @@
     private AssetSelector _assetSelector = null!;
     private StandaloneCodeEditor _editor = null!;
 
-    private Label label = new Label()
+    private Label _label = new Label()
     {
-        HTML = "<div style=\"width: 200px; height: 80px\">\n\n</div>"
+        HTML = "<div style=\"width: 200px; height: 80px\">\n\n</div>",
+        HeightMm = 50,
+        WidthMm = 50,
     };
+    
+    string _imageDataUrl = string.Empty;
+    string _pdfDataUrl = string.Empty;
+    string _pdfBaseString = string.Empty;
+    private int _assetId = 0;
 
-    private List<string> formatoptions = new List<string> { "PDF", "PNG" };
-    private string selectedFormat = "PDF";
-    private string selectedUnit = "mm";
+    private readonly List<string> _formatoptions = new List<string> { "PDF", "PNG" };
+    private string _selectedFormat = "PDF";
+    private string SelectedFormat
+    {
+        get => _selectedFormat;
+        set
+        {
+            _selectedFormat = value;
+            RerenderLabel();
+        }
+    }
+
+    private readonly List<string> _unitoptions = new List<string>() { "mm", "pixel" };
+    private string _selectedUnit = "mm";
 
     private StandaloneEditorConstructionOptions EditorConstructionOptions(StandaloneCodeEditor editor)
     {
@@ -177,43 +210,54 @@
         {
             Language = "html",
             GlyphMargin = true,
-            Value = label.HTML
+            Value = _label.HTML
         };
     }
 
-    string imageDataURL = string.Empty;
-    string pdfDataURL = string.Empty;
-    string pdfBaseString = string.Empty;
-
     private void CalcPxFromMm()
     {
-        if (label.WidthMm > 0)
+        if (_label.WidthMm > 0)
         {
-            label.WidthPx = Convert.ToInt32(PxMmConverter.MmToPx(label.WidthMm));
+            _label.WidthPx = Convert.ToInt32(PxMmConverter.MmToPx(_label.WidthMm));
         }
 
-        if (label.HeightMm > 0)
+        if (_label.HeightMm > 0)
         {
-            label.HeightPx = Convert.ToInt32(PxMmConverter.MmToPx(label.HeightMm));
+            _label.HeightPx = Convert.ToInt32(PxMmConverter.MmToPx(_label.HeightMm));
         }
     }
 
     private void CalcMmFromPx()
     {
-        if (label.WidthPx > 0)
+        if (_label.WidthPx > 0)
         {
-            label.WidthMm = Convert.ToInt32(PxMmConverter.MmToPx(label.WidthPx));
+            _label.WidthMm = Convert.ToInt32(PxMmConverter.PxToMm(_label.WidthPx));
         }
 
-        if (label.HeightPx > 0)
+        if (_label.HeightPx > 0)
         {
-            label.HeightMm = Convert.ToInt32(PxMmConverter.MmToPx(label.HeightPx));
+            _label.HeightMm = Convert.ToInt32(PxMmConverter.PxToMm(_label.HeightPx));
         }
     }
 
-    private async Task OnPageLoaded()
+    private async Task RerenderLabel()
     {
-        switch (selectedFormat)
+        if (_assetSelector != null && _assetId > 0)
+        {
+            await _assetSelector.SetAsset(_assetId);
+        }
+        
+        switch (_selectedUnit)
+        {
+            case "mm":
+                CalcPxFromMm();
+                break;
+            case "pixel":
+                CalcMmFromPx();
+                break;
+        }
+        
+        switch (_selectedFormat)
         {
             case "PDF":
                 await RenderPDF();
@@ -227,30 +271,38 @@
     private async Task RenderImage()
     {
         string html = await _editor.GetValue();
-
-        imageDataURL = HtmlConverterImagePDF.RenderLabel(html, label.HeightPx, label.WidthPx,_assetSelector.JsonFields);
+        _imageDataUrl = HtmlConverterImagePDF.RenderLabel(html, _label.HeightPx, _label.WidthPx,_assetSelector.JsonFields);
     }
 
     private async Task RenderPDF()
     {
         string html = await _editor.GetValue();
-        pdfDataURL = HtmlConverterImagePDF.RenderLabel(html, label.HeightMm, label.WidthMm, _assetSelector.JsonFields);
-        pdfDataURL = HtmlConverterImagePDF.RenderLabelPDF(html, label.HeightMm, label.WidthMm, _assetSelector.JsonFields, out pdfBaseString);
+        _pdfDataUrl = HtmlConverterImagePDF.RenderLabelPDF(html, _label.HeightMm, _label.WidthMm, _assetSelector.JsonFields, out _pdfBaseString);
     }
 
     private async Task SaveLabel()
     {
-        label.HTML = await _editor.GetValue();
+        _label.HTML = await _editor.GetValue();
 
-        label.ImageBaseString = HtmlConverterImagePDF.RenderLabel(label.HTML, label.HeightPx, label.WidthPx, null);
+        _label.ImageBaseString = HtmlConverterImagePDF.RenderLabel(_label.HTML, _label.HeightPx, _label.WidthPx, null);
 
-        if (dbContext.Labels.FirstOrDefault(x => x.Id == label.Id) != null)
+        switch (_selectedUnit)
         {
-            dbContext.Labels.Update(label);
+            case "mm":
+                CalcPxFromMm();
+                break;
+            case "pixel":
+                CalcMmFromPx();
+                break;
+        }
+        
+        if (dbContext.Labels.FirstOrDefault(x => x.Id == _label.Id) != null)
+        {
+            dbContext.Labels.Update(_label);
         }
         else
         {
-            dbContext.Labels.Add(label);
+            dbContext.Labels.Add(_label);
         }
 
         await dbContext.SaveChangesAsync();

@@ -1,17 +1,18 @@
 ﻿@page "/settings"
 @inject IToastService toastService
+@inject IStringLocalizer<Resources> Localizer
 
 <div class="container">
     <div class="mb-3">
-        <label class="form-label">SnipeAPI Base-URL</label>
+        <label class="form-label">@Localizer["sinpeItBaseUrl"]</label>
         <input class="form-control" @bind-value="Globals.Settings.APIBaseURL" placeholder="https://snipe-it.domain/api/v1/" />
     </div>
     <div class="mb-3">
-        <label class="form-label">Bearer-Token</label>
+        <label class="form-label">@Localizer["bearerToken"]</label>
         <textarea class="form-control" rows="5" @bind="Globals.Settings.APIBarerToken"></textarea>
     </div>
     <div class="mb-3">
-        <button class="btn btn-primary" @onclick="SaveChanges">Save</button>
+        <button class="btn btn-primary" @onclick="SaveChanges">@Localizer["save"]</button>
     </div>
 </div>
 
@@ -21,7 +22,7 @@
         try
         {
             APISettings.SaveSettings();
-            toastService.ShowSuccess("Setting saved!");
+            toastService.ShowSuccess(Localizer["settingsSaved"]);
         }
         catch (Exception ex)
         {

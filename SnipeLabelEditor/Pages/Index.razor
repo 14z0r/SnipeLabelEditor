@@ -1,9 +1,11 @@
 ﻿@page "/"
+@using System.Globalization
 @inject LabelsDBContext dbContext
 @inject NavigationManager navigationManager
 
+@CultureInfo.CurrentCulture.Name
+
 <div class="container">
-    <label>Wählen Sie ein Label aus</label>
     <div class="d-flex flex-wrap">
         @foreach (var item in _labels)
         {
@@ -31,6 +33,6 @@
 
     private void OpenLabel(int id)
     {
-        navigationManager.NavigateTo($"labeleditor/{id}");
+        navigationManager.NavigateTo($"printview/{id}");
     }
 }

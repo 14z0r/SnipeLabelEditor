@@ -1,0 +1,165 @@
+﻿@page "/printview/{LabelId:int}"
+@inject LabelsDBContext DbContext
+@inject IToastService ToastService
+@inject NavigationManager NavigationManager
+@inject IStringLocalizer<Resources> Localizer
+
+<div class="container mt-3">
+    <div class="row">
+        <div class="col">
+            <div class="input-group mb-3">
+                <span class="input-group-text">@Localizer["assetId"]</span>
+                <input class="form-control" @bind="_assetId"/>
+            </div>
+        </div>
+        <div class="col">
+            <div class="input-group mb-3">
+                <span class="input-group-text">@Localizer["format"]</span>
+                <select class="form-select" @bind="SelectedFormat">
+                    @foreach (var item in _formatoptions)
+                    {
+                        if (_formatoptions.IndexOf(item) == 0)
+                        {
+                            <option value="@item" selected>@item</option>
+                        }
+                        else
+                        {
+                            <option value="@item">@item</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col">
+            <button class="btn btn-success" @onclick="RerenderLabel">@Localizer["apply"]</button>
+            <button class="btn btn-primary" @onclick="Edit">@Localizer["edit"]</button>
+        </div>
+    </div>
+    <hr/>
+    @switch (_selectedFormat)
+    {
+        case "PDF":
+            @if (string.IsNullOrEmpty(_pdfDataUrl))
+            {
+                <Loading DisplayText="@Localizer["generatePdf"]"></Loading>
+                RerenderLabel();
+            }
+            else
+            {
+                <div style="display: flex; justify-content: center;">
+                    <div id="PrintDiv" style="display: inline-block; width: 100%">
+                        <embed type="application/pdf" src="@(_pdfDataUrl + "#toolbar=1")" style="width: 100%; height: @((_label.HeightMm + 30) + "mm"); overflow: hidden"/>
+                    </div>
+                </div>
+            }
+            break;
+        case "PNG":
+            @if (string.IsNullOrEmpty(_imageDataUrl))
+            {
+                <Loading DisplayText="@Localizer["generateImage"]"></Loading>
+            }
+            else
+            {
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3">
+                            <button class="btn btn-primary" onclick="PrintPNGBase64('@_imageDataUrl'); return false;">Print as Image</button>
+                        </div>
+                    </div>
+                </div>
+                <hr/>
+                <div class="row">
+                    <div class="col">
+                        <div style="display: flex; justify-content: center">
+                            <div id="PrintDiv" style="border-style: dotted; display: inline-block;">
+                                <img id="labelimage" src="@_imageDataUrl"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            break;
+    }
+    <div class="row">
+        <AssetSelector @ref="_assetSelector" IsVisible="false"></AssetSelector>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int LabelId { get; set; }
+
+    private Label _label = new Label();
+
+    private AssetSelector? _assetSelector;
+
+    private int _assetId = 0;
+    
+    private readonly List<string> _formatoptions = new List<string> { "PDF", "PNG" };
+    
+    private string _selectedFormat = "PDF";
+    private string SelectedFormat
+    {
+        get => _selectedFormat;
+        set
+        {
+            _selectedFormat = value;
+            RerenderLabel();
+        }
+    }
+    
+    string _imageDataUrl = string.Empty;
+    string _pdfDataUrl = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (LabelId > 0)
+        {
+            var label = DbContext.Labels.FirstOrDefaultAsync(x => x.Id == LabelId).Result;
+            if (label is not null)
+            {
+                _label = label;
+
+                await RerenderLabel();
+                
+                return;
+            }
+        }
+        
+        ToastService.ShowError(Localizer["labelNotExist"]);
+    }
+
+    private async Task RerenderLabel()
+    {
+        if (_assetSelector != null && _assetId > 0)
+        {
+            await _assetSelector.SetAsset(_assetId);
+        }
+        
+        switch (_selectedFormat)
+        {
+            case "PDF":
+                RenderPdf();
+                break;
+            case "PNG":
+                RenderImage();
+                break;
+        }
+    }
+    
+    private void RenderImage()
+    {
+        _imageDataUrl = HtmlConverterImagePDF.RenderLabel(_label.HTML, _label.HeightPx, _label.WidthPx, _assetSelector?.JsonFields);
+    }
+
+    private void RenderPdf()
+    {
+        string _pdfBaseString;
+        _pdfDataUrl = HtmlConverterImagePDF.RenderLabelPDF(_label.HTML, _label.HeightMm, _label.WidthMm, _assetSelector?.JsonFields, out _pdfBaseString);
+    }
+
+    private void Edit()
+    {
+        NavigationManager.NavigateTo("labeleditor/" + LabelId);
+    }
+}

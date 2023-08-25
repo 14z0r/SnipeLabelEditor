@@ -1,6 +1,7 @@
 ﻿@inherits LayoutComponentBase
+@inject IStringLocalizer<Resources> Localizer
 
-<PageTitle>SnipeLabelEditor</PageTitle>
+ <PageTitle>SnipeLabelEditor</PageTitle>
 
 <BlazoredToasts/>
 
@@ -10,32 +11,31 @@
             <nav class="nav nav-tabs nav-justified">
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                        <span class="oi oi-list-rich" aria-hidden="true"></span> Labels
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> @Localizer["labels"]
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="labeleditor">
-                        <span class="oi oi-code" aria-hidden="true"></span> Label Editor
+                        <span class="oi oi-code" aria-hidden="true"></span> @Localizer["labelEditor"]
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="settings">
-                        <span class="oi oi-cog" aria-hidden="true"></span> Settings
+                        <span class="oi oi-cog" aria-hidden="true"></span> @Localizer["settings"]
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="help">
-                        <span class="oi oi-question-mark" aria-hidden="true"></span> Help
+                        <span class="oi oi-question-mark" aria-hidden="true"></span> @Localizer["help"]
                     </NavLink>
                 </div>
             </nav>
         </div>
-
+        
         <article>
             @Body
         </article>
         
     </main>
 </div>
-
 
