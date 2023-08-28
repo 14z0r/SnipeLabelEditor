@@ -1,15 +1,12 @@
 ﻿@page "/"
-@using System.Globalization
 @inject LabelsDBContext dbContext
 @inject NavigationManager navigationManager
-
-@CultureInfo.CurrentCulture.Name
 
 <div class="container">
     <div class="d-flex flex-wrap">
         @foreach (var item in _labels)
         {
-            <button class="btn btn-outline-dark" @onclick="() => OpenLabel(item.Id)">
+            <button class="btn btn-outline-dark m-2" @onclick="() => OpenLabel(item.Id)">
                 @item.Name
                 <div class="mb-2">
                     <img class="border" src="@item.ImageBaseString"/>
@@ -18,8 +15,6 @@
         }
     </div>
 </div>
-
-
 
 @code {
     [CascadingParameter] public IModalService Modal { get; set; } = default!;

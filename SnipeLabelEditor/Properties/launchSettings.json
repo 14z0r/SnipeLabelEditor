@@ -22,7 +22,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "http://bp2vcl3.it.kontinent.intern:80"
+      "applicationUrl": "http://localhost:80"
     },
     "http": {
       "commandName": "Project",

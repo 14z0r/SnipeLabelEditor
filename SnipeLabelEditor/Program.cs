@@ -48,8 +48,9 @@ namespace SnipeLabelEditor
             }
 
             var localizeOptions = new RequestLocalizationOptions()
-                .SetDefaultCulture("en-US")
-                .AddSupportedCultures("en-US", "de-DE");
+                .SetDefaultCulture("en-EN")
+                .AddSupportedCultures("en-EN", "en-US")
+                .AddSupportedCultures("en-EN", "de-DE");
 
             app.UseRequestLocalization(localizeOptions);
 
@@ -59,6 +60,7 @@ namespace SnipeLabelEditor
 
             app.UseRouting();
 
+            app.MapControllers();
             app.MapBlazorHub();
             app.MapFallbackToPage("/_Host");
 

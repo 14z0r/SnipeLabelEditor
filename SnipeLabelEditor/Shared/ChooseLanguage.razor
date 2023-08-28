@@ -1,0 +1,38 @@
+﻿@using UriComponents = System.UriComponents
+@inject NavigationManager NavigationManager
+@inject IConfiguration Configuration
+
+@if (Globals.SupportedLanguages != null)
+{
+    <div class="input-group" style="width: auto">
+        <select class="form-select" @bind="selectedCulture">
+            @foreach (var culture in Globals.SupportedLanguages)
+            {
+                <option value="@culture.Key">@culture.Value</option>
+            }
+        </select>
+        <button class="btn btn-outline-primary" @onclick="RequestCultureChange">
+            <span class="oi oi-check"></span>
+        </button>
+    </div>
+}
+
+@code {
+    private string selectedCulture = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
+    
+    private void RequestCultureChange()
+    {
+        if (string.IsNullOrWhiteSpace(selectedCulture))
+        {
+            return;
+        }
+
+        var uri = new Uri(NavigationManager.Uri)
+            .GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
+
+        var query = $"?culture={Uri.EscapeDataString(selectedCulture)}&" +
+                    $"redirectUri={Uri.EscapeDataString(uri)}";
+
+        NavigationManager.NavigateTo("/Culture/SetCulture" + query, forceLoad: true);
+    }
+}

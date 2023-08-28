@@ -75,4 +75,7 @@
     <data name="reloadLabel" xml:space="preserve">
         <value>Reload label</value>
     </data>
+    <data name="exampleAssetText" xml:space="preserve">
+        <value>Load a sample asset to view the variable names.</value>
+    </data>
 </root>

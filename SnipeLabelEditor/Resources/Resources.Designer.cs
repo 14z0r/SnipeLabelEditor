@@ -96,6 +96,15 @@ namespace SnipeLabelEditor.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Load a sample asset to view the variable names..
+        /// </summary>
+        internal static string exampleAssetText {
+            get {
+                return ResourceManager.GetString("exampleAssetText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Format.
         /// </summary>
         internal static string format {

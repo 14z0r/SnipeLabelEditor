@@ -47,4 +47,7 @@
     <data name="width" xml:space="preserve">
         <value>Länge</value>
     </data>
+    <data name="exampleAssetText" xml:space="preserve">
+        <value>Laden Sie ein Beispiel-Asset, um sich die Variablennamen anzeigen zu lassen.</value>
+    </data>
 </root>

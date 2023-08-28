@@ -28,5 +28,12 @@ namespace SnipeLabelEditor
             get => APISettings.LoadSettings();
             set => Settings = value;
         }
+
+        public static Dictionary<string, string> SupportedLanguages = new Dictionary<string, string>()
+        {
+            { "en-EN", "English" },
+            { "en-US", "English US" },
+            { "de-DE", "Deutsch" },
+        };
     }
 }
