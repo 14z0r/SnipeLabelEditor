@@ -1,5 +1,4 @@
 ﻿using BarcodeStandard;
-using CoreHtmlToImage;
 using HtmlAgilityPack;
 using QRCoder;
 using SkiaSharp;
@@ -10,7 +9,7 @@ namespace SnipeLabelEditor.Data
     public static class HtmlConverterImagePDF
     {
         private static CoreHtmlToImage.HtmlConverter _imageConverter = new CoreHtmlToImage.HtmlConverter();
-        private static CoreHtmlToPDF.HtmlConverter _pdfConverter = new CoreHtmlToPDF.HtmlConverter();
+        private static WkHtmlToPDF.HtmlConverter _pdfConverter = new WkHtmlToPDF.HtmlConverter();
         private static QRCodeGenerator _generator = new QRCodeGenerator();
         private static Barcode _barcode = new Barcode();
 
@@ -40,7 +39,7 @@ namespace SnipeLabelEditor.Data
         {
             html = $"<div style=\"margin: -8px -8px -8px -8px;\"> {html} </div>";
 
-            var bytes = _pdfConverter.FromHtmlString(html, width, height);
+            var bytes = _pdfConverter.FromHtmlString(html, "utf-8",width, height);
 
             onlyBaseString = Convert.ToBase64String(bytes);
 

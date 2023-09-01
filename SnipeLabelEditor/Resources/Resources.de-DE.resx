@@ -50,4 +50,37 @@
     <data name="exampleAssetText" xml:space="preserve">
         <value>Laden Sie ein Beispiel-Asset, um sich die Variablennamen anzeigen zu lassen.</value>
     </data>
+    <data name="nameRequired" xml:space="preserve">
+        <value>Bitte geben Sie einen Namen für Ihr Label an.</value>
+    </data>
+    <data name="preview" xml:space="preserve">
+        <value>Vorschau</value>
+    </data>
+    <data name="open" xml:space="preserve">
+        <value>Öffnen</value>
+    </data>
+    <data name="delete" xml:space="preserve">
+        <value>Löschen</value>
+    </data>
+    <data name="requestLabelDelete" xml:space="preserve">
+        <value>Möchten Sie wirklich das Label {0} löschen?</value>
+    </data>
+    <data name="no" xml:space="preserve">
+        <value>Nein</value>
+    </data>
+    <data name="yes" xml:space="preserve">
+        <value>Ja</value>
+    </data>
+    <data name="exportLabels" xml:space="preserve">
+        <value>Ausgewählte Labels exportieren</value>
+    </data>
+    <data name="importLabels" xml:space="preserve">
+        <value>Aus Datei importieren</value>
+    </data>
+    <data name="importSucceeded" xml:space="preserve">
+        <value>Folgende Labels wurden erfolgreich importiert:</value>
+    </data>
+    <data name="importFailed" xml:space="preserve">
+        <value>Die Labels konnten nicht importiert werden:</value>
+    </data>
 </root>

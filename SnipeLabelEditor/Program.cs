@@ -49,7 +49,6 @@ namespace SnipeLabelEditor
 
             var localizeOptions = new RequestLocalizationOptions()
                 .SetDefaultCulture("en-EN")
-                .AddSupportedCultures("en-EN", "en-US")
                 .AddSupportedCultures("en-EN", "de-DE");
 
             app.UseRequestLocalization(localizeOptions);

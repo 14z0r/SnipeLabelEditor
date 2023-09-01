@@ -78,4 +78,37 @@
     <data name="exampleAssetText" xml:space="preserve">
         <value>Load a sample asset to view the variable names.</value>
     </data>
+    <data name="nameRequired" xml:space="preserve">
+        <value>Please provide a name for your label.</value>
+    </data>
+    <data name="preview" xml:space="preserve">
+        <value>Preview</value>
+    </data>
+    <data name="open" xml:space="preserve">
+        <value>Open</value>
+    </data>
+    <data name="delete" xml:space="preserve">
+        <value>Delete</value>
+    </data>
+    <data name="requestLabelDelete" xml:space="preserve">
+        <value>Do you really want to delete the label {0}?</value>
+    </data>
+    <data name="yes" xml:space="preserve">
+        <value>Yes</value>
+    </data>
+    <data name="no" xml:space="preserve">
+        <value>No</value>
+    </data>
+    <data name="exportLabels" xml:space="preserve">
+        <value>Export selected</value>
+    </data>
+    <data name="importLabels" xml:space="preserve">
+        <value>Import from file</value>
+    </data>
+    <data name="importSucceeded" xml:space="preserve">
+        <value>The following labels were successfully imported:</value>
+    </data>
+    <data name="importFailed" xml:space="preserve">
+        <value>The labels could not be imported:</value>
+    </data>
 </root>

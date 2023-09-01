@@ -87,6 +87,15 @@ namespace SnipeLabelEditor.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        internal static string delete {
+            get {
+                return ResourceManager.GetString("delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit.
         /// </summary>
         internal static string edit {
@@ -101,6 +110,15 @@ namespace SnipeLabelEditor.Resources {
         internal static string exampleAssetText {
             get {
                 return ResourceManager.GetString("exampleAssetText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export selected.
+        /// </summary>
+        internal static string exportLabels {
+            get {
+                return ResourceManager.GetString("exportLabels", resourceCulture);
             }
         }
         
@@ -150,6 +168,33 @@ namespace SnipeLabelEditor.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The labels could not be imported:.
+        /// </summary>
+        internal static string importFailed {
+            get {
+                return ResourceManager.GetString("importFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import from file.
+        /// </summary>
+        internal static string importLabels {
+            get {
+                return ResourceManager.GetString("importLabels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following labels were successfully imported:.
+        /// </summary>
+        internal static string importSucceeded {
+            get {
+                return ResourceManager.GetString("importSucceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Label Editor.
         /// </summary>
         internal static string labelEditor {
@@ -186,11 +231,56 @@ namespace SnipeLabelEditor.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please provide a name for your label..
+        /// </summary>
+        internal static string nameRequired {
+            get {
+                return ResourceManager.GetString("nameRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No.
+        /// </summary>
+        internal static string no {
+            get {
+                return ResourceManager.GetString("no", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open.
+        /// </summary>
+        internal static string open {
+            get {
+                return ResourceManager.GetString("open", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Preview.
+        /// </summary>
+        internal static string preview {
+            get {
+                return ResourceManager.GetString("preview", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reload label.
         /// </summary>
         internal static string reloadLabel {
             get {
                 return ResourceManager.GetString("reloadLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you really want to delete the label {0}?.
+        /// </summary>
+        internal static string requestLabelDelete {
+            get {
+                return ResourceManager.GetString("requestLabelDelete", resourceCulture);
             }
         }
         
@@ -236,6 +326,15 @@ namespace SnipeLabelEditor.Resources {
         internal static string width {
             get {
                 return ResourceManager.GetString("width", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yes.
+        /// </summary>
+        internal static string yes {
+            get {
+                return ResourceManager.GetString("yes", resourceCulture);
             }
         }
     }

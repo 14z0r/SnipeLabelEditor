@@ -1,0 +1,36 @@
+﻿@inject IStringLocalizer<Resources> Localizer
+@inject LabelsDBContext DbContext
+
+<div class="container">
+    <div class="row">
+        <p>@Localizer["requestLabelDelete", Label.Name]</p>
+    </div>
+    <div class="row">
+        <img src="@Label.ImageBaseString" />
+    </div>
+    <div class="row text-center">
+        <div class="col">
+            <button class="btn btn-primary" @onclick="Close">@Localizer["no"]</button>
+        </div>
+        <div class="col">
+            <button class="btn btn-danger" @onclick="Delete">@Localizer["yes"]</button>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
+    
+    [Parameter]
+    public Label Label { get; set; }
+
+    private async Task Delete()
+    {
+        DbContext.Labels.Remove(this.Label);
+        await DbContext.SaveChangesAsync();
+        await BlazoredModal.CloseAsync(ModalResult.Ok());
+    }
+
+    private async Task Close() => await BlazoredModal.CloseAsync();
+}

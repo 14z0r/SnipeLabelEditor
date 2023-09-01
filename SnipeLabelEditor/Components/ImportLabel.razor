@@ -1,0 +1,54 @@
+﻿@using System.Text.Json
+@using System.Diagnostics
+@inject LabelsDBContext DbContext
+@inject IToastService ToastService
+@inject IStringLocalizer<Resources> Localizer
+
+<div class="container">
+    <div class="row">
+        <InputFile class="form-control" OnChange="Import"></InputFile>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
+    
+    private async Task Import(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            var memoryStream = new MemoryStream();
+            await e.File.OpenReadStream().CopyToAsync(memoryStream);
+
+            memoryStream.Position = 0;
+            var sr = new StreamReader(memoryStream);
+        
+            string json = await sr.ReadToEndAsync();
+
+            List<Label> labels = JsonSerializer.Deserialize<List<Label>>(json);
+
+            foreach (var label in labels)
+            {
+                label.Id = 0;
+                DbContext.Labels.Add(label);
+            }
+
+            await DbContext.SaveChangesAsync();
+
+            string message = Localizer["importSucceeded"];
+            foreach (var label in labels)
+            {
+                message += "-" + label.Name;
+            }
+
+            ToastService.ShowSuccess(message);
+        
+            await BlazoredModal.CloseAsync(ModalResult.Ok());
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            ToastService.ShowError(Localizer["importFailed"] + " " + ex.Message);
+        }
+    }
+}

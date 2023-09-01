@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject IStringLocalizer<Resources> Localizer
+@inject IModalService Modal
 
  <PageTitle>SnipeLabelEditor</PageTitle>
 
@@ -7,7 +8,7 @@
 
 <div class="page">
     <main>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
                 <a class="navbar-brand"></a>
                 <ul class="nav nav-pills">
@@ -26,13 +27,13 @@
                             <span class="oi oi-cog" aria-hidden="true"></span> @Localizer["settings"]
                         </NavLink>
                     </li>
-                    <li class="nav-item">
-                        <NavLink class="nav-link link-dark" href="help">
-                            <span class="oi oi-question-mark" aria-hidden="true"></span> @Localizer["help"]
-                        </NavLink>
-                    </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
+                    <li class="nav-item me-2">
+                        <button class="btn btn-outline-primary" @onclick="@(() => Modal.Show<Help>(Localizer["help"], _helpModalOptions))">
+                            <span class="oi oi-question-mark" aria-hidden="true"></span> @Localizer["help"]
+                        </button>
+                    </li>
                     <li class="nav-item ms-auto">
                         <ChooseLanguage></ChooseLanguage>
                     </li>
@@ -46,3 +47,13 @@
 
     </main>
 </div>
+
+@code
+{
+    BlazoredModal _helpModal;
+
+    private ModalOptions _helpModalOptions = new ModalOptions()
+    {
+        Size = ModalSize.Large,
+    };
+}

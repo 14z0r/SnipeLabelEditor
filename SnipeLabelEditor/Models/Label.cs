@@ -8,7 +8,7 @@ namespace SnipeLabelEditor.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessageResourceType = typeof(Resources.Resources), ErrorMessageResourceName = "nameRequired")]
         public string Name { get; set; } = string.Empty;
 
         public string HTML { get; set; } = string.Empty;

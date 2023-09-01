@@ -1,0 +1,38 @@
+﻿@inject NavigationManager NavigationManager
+@inject IStringLocalizer<Resources> Localizer
+
+@if (Label is not null)
+{
+    <div class="container">
+        <div class="row">
+            <img src="@Label.ImageBaseString" />
+        </div>
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-primary" @onclick="Open">@Localizer["open"]</button>
+            </div>
+            <div class="col">
+                <button class="btn btn-success" @onclick="Edit">@Localizer["edit"]</button>
+            </div>
+            <div class="col">
+                <button class="btn btn-danger" @onclick="Edit">@Localizer["delete"]</button>
+            </div>
+        </div>
+    </div>
+    
+}
+
+@code {
+    [Parameter]
+    public Label? Label { get; set; }
+    
+    private void Open()
+    {
+        NavigationManager.NavigateTo($"printview/" + Label.Id);
+    }
+    
+    private void Edit()
+    {
+        NavigationManager.NavigateTo("labeleditor/" + Label.Id);
+    }
+}

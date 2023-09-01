@@ -1,19 +1,36 @@
 ﻿@page "/"
-@inject LabelsDBContext dbContext
-@inject NavigationManager navigationManager
+@inject LabelsDBContext DbContext
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+@inject IStringLocalizer<Resources> Localizer
 
 <div class="container">
-    <div class="d-flex flex-wrap">
+    <button @onclick="ImportLabel" class="btn btn-success">@Localizer["importLabels"]</button>
+    <button @onclick="DownloadFileFromStream" class="btn btn-primary">@Localizer["exportLabels"]</button>
+    <table class="table">
+        <thead>
+        <tr>
+            <th></th>
+            <th>@Localizer["name"]</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
         @foreach (var item in _labels)
         {
-            <button class="btn btn-outline-dark m-2" @onclick="() => OpenLabel(item.Id)">
-                @item.Name
-                <div class="mb-2">
-                    <img class="border" src="@item.ImageBaseString"/>
-                </div>
-            </button>
+            <tr>
+                <td><input class="form-check-input" type="checkbox" @onchange="() => AddRemoveLabelForExport(item)"/></td>
+                <td>@item.Name</td>
+                <td>
+                    <button class="btn btn-primary" @onclick="() => Modal.Show<LabelPreview>(item.Name, new ModalParameters() { { nameof(LabelPreview.Label), item } })">@Localizer["preview"]</button>
+                    <button class="btn btn-primary" @onclick="() => Open(item.Id)">@Localizer["open"]</button>
+                    <button class="btn btn-success" @onclick="() => Edit(item.Id)">@Localizer["edit"]</button>
+                    <button class="btn btn-danger" @onclick="() => RequestDeleteLabel(item)">@Localizer["delete"]</button>
+                </td>
+            </tr>
         }
-    </div>
+        </tbody>
+    </table>
 </div>
 
 @code {
@@ -21,13 +38,78 @@
     
     protected override async Task OnInitializedAsync()
     {
-        _labels = await dbContext.Labels.ToListAsync();
+        _labels = await DbContext.Labels.ToListAsync();
     }
-
+    
     private List<Label> _labels;
 
-    private void OpenLabel(int id)
+    private List<Label> _labelsForExport = new List<Label>();
+    
+    private void Open(int id)
     {
-        navigationManager.NavigateTo($"printview/{id}");
+        NavigationManager.NavigateTo($"printview/" + id);
+    }
+    
+    private void Edit(int id)
+    {
+        NavigationManager.NavigateTo("labeleditor/" + id);
+    }
+
+    private void AddRemoveLabelForExport(Label label)
+    {
+        if (_labelsForExport.Contains(label))
+        {
+            _labelsForExport.Remove(label);
+        }
+        else
+        {
+            _labelsForExport.Add(label);
+        }
+    }
+
+    private Stream GetFileStream()
+    {
+        string data = ImportExportLabels.ExportLabels(_labelsForExport);
+        var ms = new MemoryStream();
+        TextWriter tw = new StreamWriter(ms);
+        tw.Write(data);
+        tw.Flush();
+        ms.Position = 0;
+        return ms;
+    }
+
+    private async Task DownloadFileFromStream()
+    {
+        if (_labelsForExport.Count > 0)
+        {
+            var fileStream = GetFileStream();
+            var fileName = "data.json";
+
+            using var streamRef = new DotNetStreamReference(stream: fileStream);
+
+            await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
+        }
+    }
+
+    private async Task RequestDeleteLabel(Label label)
+    {
+        var deleteLabel = Modal.Show<DeleteLabel>(label.Name, new ModalParameters() { { nameof(DeleteLabel.Label), label } });
+        var result = await deleteLabel.Result;
+
+        if (result.Confirmed)
+        {
+            _labels = await DbContext.Labels.ToListAsync();
+        }
+    }
+    
+    private async Task ImportLabel()
+    {
+        var importLabel = Modal.Show<ImportLabel>(Localizer["importLabels"]);
+        var result = await importLabel.Result;
+
+        if (result.Confirmed)
+        {
+            _labels = await DbContext.Labels.ToListAsync();
+        }
     }
 }

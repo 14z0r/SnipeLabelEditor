@@ -1,5 +1,5 @@
 ﻿@page "/settings"
-@inject IToastService toastService
+@inject IToastService ToastService
 @inject IStringLocalizer<Resources> Localizer
 
 <div class="container">
@@ -22,11 +22,11 @@
         try
         {
             APISettings.SaveSettings();
-            toastService.ShowSuccess(Localizer["settingsSaved"]);
+            ToastService.ShowSuccess(Localizer["settingsSaved"]);
         }
         catch (Exception ex)
         {
-            toastService.ShowError(ex.Message);
+            ToastService.ShowError(ex.Message);
         }
     }
 }

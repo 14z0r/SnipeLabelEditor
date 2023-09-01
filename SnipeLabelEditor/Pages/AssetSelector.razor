@@ -1,5 +1,5 @@
 ﻿@page "/assetselector"
-@inject IToastService toastService
+@inject IToastService ToastService
 
 @if (IsVisible)
 {
@@ -56,7 +56,7 @@
         }
         catch (Exception ex)
         {
-            toastService.ShowError(ex.Message);
+            ToastService.ShowError(ex.Message);
         }
         
         StateHasChanged();
