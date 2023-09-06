@@ -24,10 +24,11 @@ namespace SnipeLabelEditor.Data
             return JsonSerializer.Deserialize<APISettings>(jsonstring);
         }
 
-        public static void SaveSettings()
+        public static void SaveSettings(APISettings settings)
         {
-            string jsonstring = JsonSerializer.Serialize(Globals.Settings);
+            string jsonstring = JsonSerializer.Serialize(settings);
             File.WriteAllText(filename, jsonstring);
+            LoadSettings();
         }
     }
 }

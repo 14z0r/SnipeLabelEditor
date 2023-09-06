@@ -13,18 +13,18 @@ namespace SnipeLabelEditor.Models
 
         public string HTML { get; set; } = string.Empty;
 
-        private string imageBaseString = "";
-        public string ImageBaseString 
+        private string pdfBaseString = "";
+        public string PdfBaseString 
         { 
             get 
             {
-                if (string.IsNullOrEmpty(imageBaseString))
+                if (string.IsNullOrEmpty(pdfBaseString))
                 {
-                    imageBaseString = HtmlConverterImagePDF.RenderLabel(HTML, HeightPx, WidthPx, null);
+                    pdfBaseString = HtmlConverterImagePDF.RenderLabelPDF(HTML, HeightMm, WidthMm, null);
                 }
-                return imageBaseString;
+                return pdfBaseString;
             } 
-            set => imageBaseString = value;
+            set => pdfBaseString = value;
         }
         public int HeightPx { get; set; }
 

@@ -20,23 +20,10 @@
                 <div class="col">
                     <div class="input-group mb-3">
                         <span class="input-group-text">@Localizer["format"]</span>
-                        <select class="form-select" @bind="SelectedFormat">
-                            @foreach (var item in _formatoptions)
-                            {
-                                if (_formatoptions.IndexOf(item) == 0)
-                                {
-                                    <option value="@item" selected>@item</option>
-                                }
-                                else
-                                {
-                                    <option value="@item">@item</option>
-                                }
-                            }
-                        </select>
-                        <select class="form-select" @bind="_selectedUnit" @onselectionchange="RerenderLabel">
+                        <select class="form-select" @bind="_selectedUnit" @onselectionchange="RenderPDF">
                             @foreach (var item in _unitoptions)
                             {
-                                if (_formatoptions.IndexOf(item) == 0)
+                                if (item == _selectedUnit)
                                 {
                                     <option value="@item" selected>@item</option>
                                 }
@@ -92,52 +79,31 @@
                     break;
             }
             <div class="col">
-                <button class="btn btn-primary" @onclick="RerenderLabel">@Localizer["reloadLabel"]</button>
+                <button class="btn btn-primary" @onclick="RenderPDF">@Localizer["reloadLabel"]</button>
             </div>
         </div>
         <hr/>
         <div class="row">
-            @switch (_selectedFormat)
-            {
-                case "PDF":
-                    <div class="col">
-                        @if (string.IsNullOrEmpty(_pdfDataUrl))
-                        {
-                            <Loading DisplayText="@Localizer["generatePdf"]"></Loading>
-                        }
-                        else
-                        {
-                            <div style="display: flex; justify-content: center;">
-                                <div id="PrintDiv" style="display: inline-block; width: 100%">
-                                    <embed type="application/pdf" src="@(_pdfDataUrl + "#toolbar=1")" style="width: 100%; height: @((_label.HeightMm + 30) + "mm"); overflow: hidden"/>
-                                </div>
-                            </div>
-                        }
+            <div class="col">
+                @if (string.IsNullOrEmpty(_pdfDataUrl))
+                {
+                    <Loading DisplayText="@Localizer["generatePdf"]"></Loading>
+                }
+                else
+                {
+                    <div style="display: flex; justify-content: center;">
+                        <div id="PrintDiv" style="display: inline-block; width: 100%">
+                            <embed type="application/pdf" src="@(_pdfDataUrl + "#toolbar=1")" style="width: 100%; height: @((_label.HeightMm + 30) + "mm"); overflow: hidden"/>
+                        </div>
                     </div>
-                    break;
-                case "PNG":
-                    <div class="col">
-                        @if (string.IsNullOrEmpty(_pdfDataUrl))
-                        {
-                            <Loading DisplayText="@Localizer["generateImage"]"></Loading>
-                        }
-                        else
-                        {
-                            <div style="display: flex; justify-content: center">
-                                <div id="PrintDiv" style="border-style: dotted; display: inline-block;">
-                                    <img id="labelimage" src="@_imageDataUrl"/>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                    break;
-            }
+                }
+            </div>
         </div>
         <hr/>
         <div class="row">
             <div class="col-8">
                 <div class="mt-2">
-                    <StandaloneCodeEditor @ref="_editor" CssClass="monaco-editor-container" ConstructionOptions="EditorConstructionOptions" OnDidChangeModelContent="RerenderLabel" OnDidInit="RerenderLabel"/>
+                    <StandaloneCodeEditor @ref="_editor" CssClass="monaco-editor-container" ConstructionOptions="EditorConstructionOptions" OnDidChangeModelContent="RenderPDF" OnDidInit="RenderPDF"/>
                 </div>
             </div>
             <div class="col-4">
@@ -150,7 +116,7 @@
                         </div>
                     </div>
                     <div class="col">
-                        <button class="btn btn-success" @onclick="RerenderLabel">@Localizer["apply"]</button>
+                        <button class="btn btn-success" @onclick="RenderPDF">@Localizer["apply"]</button>
                     </div>
                 </div>
                 <div class="row">
@@ -193,22 +159,8 @@
         WidthMm = 50,
     };
     
-    string _imageDataUrl = string.Empty;
     string _pdfDataUrl = string.Empty;
-    string _pdfBaseString = string.Empty;
     private int _assetId = 0;
-
-    private readonly List<string> _formatoptions = new List<string> { "PDF", "PNG" };
-    private string _selectedFormat = "PDF";
-    private string SelectedFormat
-    {
-        get => _selectedFormat;
-        set
-        {
-            _selectedFormat = value;
-            RerenderLabel();
-        }
-    }
 
     private readonly List<string> _unitoptions = new List<string>() { "mm", "pixel" };
     private string _selectedUnit = "mm";
@@ -249,7 +201,7 @@
         }
     }
 
-    private async Task RerenderLabel()
+    private async Task RenderPDF()
     {
         if (_assetSelector != null && _assetId > 0)
         {
@@ -266,34 +218,15 @@
                 break;
         }
         
-        switch (_selectedFormat)
-        {
-            case "PDF":
-                await RenderPDF();
-                break;
-            case "PNG":
-                await RenderImage();
-                break;
-        }
-    }
-
-    private async Task RenderImage()
-    {
         string html = await _editor.GetValue();
-        _imageDataUrl = HtmlConverterImagePDF.RenderLabel(html, _label.HeightPx, _label.WidthPx,_assetSelector.JsonFields);
-    }
-
-    private async Task RenderPDF()
-    {
-        string html = await _editor.GetValue();
-        _pdfDataUrl = HtmlConverterImagePDF.RenderLabelPDF(html, _label.HeightMm, _label.WidthMm, _assetSelector.JsonFields, out _pdfBaseString);
+        _pdfDataUrl = HtmlConverterImagePDF.RenderLabelPDF(html, _label.HeightMm, _label.WidthMm, _assetSelector.JsonFields);
     }
 
     private async Task SaveLabel()
     {
         _label.HTML = await _editor.GetValue();
 
-        _label.ImageBaseString = HtmlConverterImagePDF.RenderLabel(_label.HTML, _label.HeightPx, _label.WidthPx, null);
+        _label.PdfBaseString = HtmlConverterImagePDF.RenderLabelPDF(_label.HTML, _label.HeightMm, _label.WidthMm, null);
 
         switch (_selectedUnit)
         {

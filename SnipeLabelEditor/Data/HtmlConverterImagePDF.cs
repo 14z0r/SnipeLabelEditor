@@ -8,42 +8,17 @@ namespace SnipeLabelEditor.Data
 {
     public static class HtmlConverterImagePDF
     {
-        private static CoreHtmlToImage.HtmlConverter _imageConverter = new CoreHtmlToImage.HtmlConverter();
         private static WkHtmlToPDF.HtmlConverter _pdfConverter = new WkHtmlToPDF.HtmlConverter();
         private static QRCodeGenerator _generator = new QRCodeGenerator();
         private static Barcode _barcode = new Barcode();
 
-        private static string RenderImageAsBase64(string html, int height, int width)
-        {
-            html = $"<div style=\"margin: -8px -8px -8px -8px;\"> {html} </div>";
-            var bytes = _imageConverter.FromHtmlString(html, 50, CoreHtmlToImage.ImageFormat.Png, 100);
-
-            if (height <= 0 || width <= 0)
-            {
-                return string.Format("data:image/png;base64,{0}", Convert.ToBase64String(bytes));
-            }
-            else
-            {
-                var image = SKImage.FromEncodedData(bytes);
-                var bitmap = SKBitmap.FromImage(image);
-
-                var pixmap = new SKPixmap(bitmap.Info, bitmap.GetPixels());
-                SKRectI rectI = new SKRectI(0, 0, width, height);
-                var subset = pixmap.ExtractSubset(rectI);
-                var data = subset.Encode(SKEncodedImageFormat.Png, 100);
-                return string.Format("data:image/png;base64,{0}", Convert.ToBase64String(data.ToArray()));
-            }
-        }
-
-        private static string RenderPDFAsBase64(string html, int height, int width, out string onlyBaseString)
+        private static string RenderPDFAsBase64(string html, int height, int width)
         {
             html = $"<div style=\"margin: -8px -8px -8px -8px;\"> {html} </div>";
 
             var bytes = _pdfConverter.FromHtmlString(html, "utf-8",width, height);
 
-            onlyBaseString = Convert.ToBase64String(bytes);
-
-            return string.Format("data:application/pdf;base64,{0}", onlyBaseString);
+            return string.Format("data:application/pdf;base64,{0}", Convert.ToBase64String(bytes));
         }
 
         private static string RenderQRCode(string data, int size)
@@ -88,77 +63,7 @@ namespace SnipeLabelEditor.Data
             return html;
         }
 
-        public static string RenderLabel(string html, int heightpx, int widthpx, Dictionary<string, string>? fields)
-        {
-            if(fields != null)
-            {
-                html = ReplaceVariabels(html, fields);
-            }
-            
-            HtmlDocument htmlDocument = new HtmlDocument();
-            htmlDocument.LoadHtml(html);
-
-            //Render QRcodes
-            var qrcodenodes = htmlDocument.DocumentNode.SelectNodes("//qrcode");
-            if (qrcodenodes != null)
-            {
-                foreach (var item in qrcodenodes)
-                {
-                    try
-                    {
-                        var qrcode = HtmlConverterImagePDF.RenderQRCode(item.InnerText, Convert.ToInt32(item.Attributes["size"]?.Value));
-                        var imagenode = HtmlNode.CreateNode($"<img src=\"{qrcode}\">");
-
-                        var parent = item.ParentNode;
-                        parent.ReplaceChild(imagenode, item);
-                    }
-                    catch (Exception ex)
-                    {
-                        var errornode = HtmlNode.CreateNode($"<p style=\"color:red\">{ex.Message}</p>");
-                        var parent = item.ParentNode;
-                        parent.ReplaceChild(errornode, item);
-                    }
-
-                }
-            }
-            
-
-            //Render barcodes
-            var barcodenodes = htmlDocument.DocumentNode.SelectNodes("//barcode");
-            if (barcodenodes != null)
-            {
-                foreach (var item in barcodenodes)
-                {
-                    try
-                    {
-                        int barcodewidth = Convert.ToInt32(item.Attributes["width"]?.Value);
-                        int barcodeheight = Convert.ToInt32(item.Attributes["height"]?.Value);
-                        bool includeLabel = Convert.ToBoolean(item.Attributes["includelabel"]?.Value);
-                        int fontsize = Convert.ToInt32(item.Attributes["fontsize"]?.Value);
-                        string fontfamily = Convert.ToString(item.Attributes["fontfamily"]?.Value);
-                        string codetype = Convert.ToString(item.Attributes["codetype"]?.Value);
-                        var barcode = HtmlConverterImagePDF.RenderBarcode(item.InnerText, barcodewidth, barcodeheight, includeLabel, fontsize, fontfamily, codetype);
-                        var imagenode = HtmlNode.CreateNode($"<img src=\"{barcode}\">");
-                        var parent = item.ParentNode;
-                        parent.ReplaceChild(imagenode, item);
-                    }
-                    catch (Exception ex)
-                    {
-                        var errornode = HtmlNode.CreateNode($"<p style=\"color:red\">{ex.Message}</p>");
-                        var parent = item.ParentNode;
-                        parent.ReplaceChild(errornode, item);
-                    }
-                }
-            }
-            
-            html = htmlDocument.DocumentNode.OuterHtml;
-
-            string imageBase64String = RenderImageAsBase64(html, heightpx, widthpx);
-
-            return imageBase64String;
-        }
-
-        public static string RenderLabelPDF(string html, int heightmm, int widthmm, Dictionary<string, string>? fields, out string onlyBaseString)
+        public static string RenderLabelPDF(string html, int heightmm, int widthmm, Dictionary<string, string>? fields)
         {
             if (fields != null)
             {
@@ -223,7 +128,7 @@ namespace SnipeLabelEditor.Data
 
             html = htmlDocument.DocumentNode.OuterHtml;
 
-            string pdfBase64String = RenderPDFAsBase64(html, heightmm, widthmm, out onlyBaseString);
+            string pdfBase64String = RenderPDFAsBase64(html, heightmm, widthmm);
 
             return pdfBase64String;
         }
