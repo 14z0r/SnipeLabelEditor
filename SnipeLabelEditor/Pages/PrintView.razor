@@ -4,6 +4,8 @@
 @inject NavigationManager NavigationManager
 @inject IStringLocalizer<Resources> Localizer
 
+<PageTitle>@(Localizer["printView"] + " " + _label.Name)</PageTitle>
+
 <div class="container">
     <div class="row">
         <div class="col">
@@ -78,7 +80,7 @@
 
     private void RenderPdf()
     {
-        _pdfDataUrl = HtmlConverterImagePDF.RenderLabelPDF(_label.HTML, _label.HeightMm, _label.WidthMm, _assetSelector?.JsonFields);
+        _pdfDataUrl = HtmlConverterImagePDF.RenderLabelPDF(_label.HTML, _label.HeightMm, _label.WidthMm, _label.MarginLeft, _label.MarginRight, _label.MarginTop, _label.MarginBottom, _assetSelector?.JsonFields);
     }
 
     private void Edit()

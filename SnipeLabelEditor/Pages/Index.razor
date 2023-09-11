@@ -4,6 +4,8 @@
 @inject IJSRuntime JS
 @inject IStringLocalizer<Resources> Localizer
 
+<PageTitle>@Localizer["welcome"]</PageTitle>
+
 <div class="container">
     <button @onclick="ImportLabel" class="btn btn-success">@Localizer["importLabels"]</button>
     <button @onclick="DownloadFileFromStream" class="btn btn-primary">@Localizer["exportLabels"]</button>
@@ -22,9 +24,10 @@
                 <td><input class="form-check-input" type="checkbox" @onchange="() => AddRemoveLabelForExport(item)"/></td>
                 <td>@item.Name</td>
                 <td>
-                    <button class="btn btn-primary" @onclick="() => Modal.Show<LabelPreview>(item.Name, new ModalParameters() { { nameof(LabelPreview.Label), item } })">@Localizer["preview"]</button>
+                    <button class="btn btn-primary" @onclick="() => Preview(item)">@Localizer["preview"]</button>
                     <button class="btn btn-primary" @onclick="() => Open(item.Id)">@Localizer["open"]</button>
-                    <button class="btn btn-success" @onclick="() => Edit(item.Id)">@Localizer["edit"]</button>
+                    <button class="btn btn-primary" @onclick="() => Edit(item.Id)">@Localizer["edit"]</button>
+                    <button class="btn btn-primary" @onclick="() => CopyAndEdit(item.Id)">@Localizer["copyAndEdit"]</button>
                     <button class="btn btn-danger" @onclick="() => RequestDeleteLabel(item)">@Localizer["delete"]</button>
                 </td>
             </tr>
@@ -45,6 +48,18 @@
 
     private List<Label> _labelsForExport = new List<Label>();
     
+    private async Task Preview(Label label)
+    {
+        var deleteLabel = Modal.Show<LabelPreview>(label.Name, new ModalParameters() { { nameof(LabelPreview.Label), label } });
+        
+        var result = await deleteLabel.Result;
+
+        if (result.Confirmed)
+        {
+            _labels = await DbContext.Labels.ToListAsync();
+        }
+    }
+    
     private void Open(int id)
     {
         NavigationManager.NavigateTo($"printview/" + id);
@@ -53,6 +68,11 @@
     private void Edit(int id)
     {
         NavigationManager.NavigateTo("labeleditor/" + id);
+    }
+    
+    private void CopyAndEdit(int id)
+    {
+        NavigationManager.NavigateTo("labeleditor/copyandedit/" + id);
     }
 
     private void AddRemoveLabelForExport(Label label)

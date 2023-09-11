@@ -83,4 +83,34 @@
     <data name="importFailed" xml:space="preserve">
         <value>Die Labels konnten nicht importiert werden:</value>
     </data>
+    <data name="marginBottom" xml:space="preserve">
+        <value>Margin unten</value>
+    </data>
+    <data name="marginLeft" xml:space="preserve">
+        <value>Margin links</value>
+    </data>
+    <data name="marginRight" xml:space="preserve">
+        <value>Margin rechts</value>
+    </data>
+    <data name="marginTop" xml:space="preserve">
+        <value>Margin oben</value>
+    </data>
+    <data name="copyAndEdit" xml:space="preserve">
+        <value>Kopieren und bearbeiten</value>
+    </data>
+    <data name="welcome" xml:space="preserve">
+        <value>Willkommen</value>
+    </data>
+    <data name="printView" xml:space="preserve">
+        <value>Drucken</value>
+    </data>
+    <data name="labelEditor" xml:space="preserve">
+        <value>Label Bearbeitung</value>
+    </data>
+    <data name="info" xml:space="preserve">
+        <value>Informationen</value>
+    </data>
+    <data name="about" xml:space="preserve">
+        <value>Mit dem SnipeLabelEditor können Sie einfach mit HTML und CSS Labels erstellen und sich diese als PDF ausgeben lassen. Durch die Anbindung an die Snipe-API können Sie mit Variablen arbeiten, welche beim Rendern der PDF automatisch ersetzt werden. Es ist außerdem möglich, Bar- und QR-Codes zu erzeugen. Viel Spaß beim Designen.</value>
+    </data>
 </root>

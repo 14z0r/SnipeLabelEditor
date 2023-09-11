@@ -60,6 +60,15 @@ namespace SnipeLabelEditor.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to With the SnipeLabelEditor you can easily create labels with HTML and CSS and have them output as PDF. Through the connection to the Snipe API you can work with variables, which are automatically replaced when rendering the PDF. It is also possible to create barcodes and QR codes. Have fun designing..
+        /// </summary>
+        internal static string about {
+            get {
+                return ResourceManager.GetString("about", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Apply.
         /// </summary>
         internal static string apply {
@@ -83,6 +92,15 @@ namespace SnipeLabelEditor.Resources {
         internal static string bearerToken {
             get {
                 return ResourceManager.GetString("bearerToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy and edit.
+        /// </summary>
+        internal static string copyAndEdit {
+            get {
+                return ResourceManager.GetString("copyAndEdit", resourceCulture);
             }
         }
         
@@ -195,6 +213,15 @@ namespace SnipeLabelEditor.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Informations.
+        /// </summary>
+        internal static string info {
+            get {
+                return ResourceManager.GetString("info", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Label Editor.
         /// </summary>
         internal static string labelEditor {
@@ -218,6 +245,42 @@ namespace SnipeLabelEditor.Resources {
         internal static string labels {
             get {
                 return ResourceManager.GetString("labels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Margin bottom.
+        /// </summary>
+        internal static string marginBottom {
+            get {
+                return ResourceManager.GetString("marginBottom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Margin left.
+        /// </summary>
+        internal static string marginLeft {
+            get {
+                return ResourceManager.GetString("marginLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Margin right.
+        /// </summary>
+        internal static string marginRight {
+            get {
+                return ResourceManager.GetString("marginRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Margin top.
+        /// </summary>
+        internal static string marginTop {
+            get {
+                return ResourceManager.GetString("marginTop", resourceCulture);
             }
         }
         
@@ -263,6 +326,15 @@ namespace SnipeLabelEditor.Resources {
         internal static string preview {
             get {
                 return ResourceManager.GetString("preview", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Print.
+        /// </summary>
+        internal static string printView {
+            get {
+                return ResourceManager.GetString("printView", resourceCulture);
             }
         }
         
@@ -317,6 +389,15 @@ namespace SnipeLabelEditor.Resources {
         internal static string sinpeItBaseUrl {
             get {
                 return ResourceManager.GetString("sinpeItBaseUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome.
+        /// </summary>
+        internal static string welcome {
+            get {
+                return ResourceManager.GetString("welcome", resourceCulture);
             }
         }
         

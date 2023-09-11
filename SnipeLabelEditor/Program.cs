@@ -49,11 +49,12 @@ namespace SnipeLabelEditor
 
             var localizeOptions = new RequestLocalizationOptions()
                 .SetDefaultCulture("en-EN")
-                .AddSupportedCultures("en-EN", "de-DE");
+                .AddSupportedCultures("en-EN", "de-DE")
+                .AddSupportedUICultures("en-EN", "de-DE");
 
             app.UseRequestLocalization(localizeOptions);
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseStaticFiles();
 

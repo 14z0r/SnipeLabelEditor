@@ -20,7 +20,7 @@ namespace SnipeLabelEditor.Models
             {
                 if (string.IsNullOrEmpty(pdfBaseString))
                 {
-                    pdfBaseString = HtmlConverterImagePDF.RenderLabelPDF(HTML, HeightMm, WidthMm, null);
+                    pdfBaseString = HtmlConverterImagePDF.RenderLabelPDF(HTML, HeightMm, WidthMm, MarginLeft, MarginRight, MarginTop, MarginBottom, null);
                 }
                 return pdfBaseString;
             } 
@@ -33,5 +33,10 @@ namespace SnipeLabelEditor.Models
         public int HeightMm { get; set; }
 
         public int WidthMm { get; set; }
+
+        public int MarginLeft { get; set; }
+        public int MarginRight { get; set; }
+        public int MarginTop { get; set; }
+        public int MarginBottom { get; set; }
     }
 }

@@ -6,8 +6,9 @@
         <p>@Localizer["requestLabelDelete", Label.Name]</p>
     </div>
     <div class="row">
-        <img src="@Label.PdfBaseString" />
+        <embed type="application/pdf" src="@(Label.PdfBaseString + "#toolbar=1")" style="overflow: hidden"/>
     </div>
+    <hr/>
     <div class="row text-center">
         <div class="col">
             <button class="btn btn-primary" @onclick="Close">@Localizer["no"]</button>

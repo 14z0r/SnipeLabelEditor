@@ -1,8 +1,11 @@
 ﻿@page "/labeleditor"
 @page "/labeleditor/{LabelId:int}"
+@page "/labeleditor/copyandedit/{LabelId:int}"
 @inject LabelsDBContext DbContext
 @inject IStringLocalizer<Resources> Localizer
+@inject NavigationManager NavManager
 
+<PageTitle>@Localizer["labelEditor"]</PageTitle>
 
 @if (_label != null)
 {
@@ -85,6 +88,37 @@
         <hr/>
         <div class="row">
             <div class="col">
+                <div class="input-group mb-3">
+                    <span class="input-group-text">@Localizer["marginLeft"]</span>
+                    <input class="form-control" @bind-value="_label.MarginLeft"/>
+                    <span class="input-group-text">px</span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group mb-3">
+                    <span class="input-group-text">@Localizer["marginTop"]</span>
+                    <input class="form-control" @bind-value="_label.MarginTop"/>
+                    <span class="input-group-text">px</span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group mb-3">
+                    <span class="input-group-text">@Localizer["marginRight"]</span>
+                    <input class="form-control" @bind-value="_label.MarginRight"/>
+                    <span class="input-group-text">px</span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group mb-3">
+                    <span class="input-group-text">@Localizer["marginBottom"]</span>
+                    <input class="form-control" @bind-value="_label.MarginBottom"/>
+                    <span class="input-group-text">px</span>
+                </div>
+            </div>
+        </div>
+        <hr/>
+        <div class="row">
+            <div class="col">
                 @if (string.IsNullOrEmpty(_pdfDataUrl))
                 {
                     <Loading DisplayText="@Localizer["generatePdf"]"></Loading>
@@ -145,6 +179,11 @@
             if (label is not null)
             {
                 _label = label;
+                
+                if (NavManager.Uri.Contains("copyandedit"))
+                {
+                    _label.Id = 0;
+                }
             }
         }
     }
@@ -219,14 +258,14 @@
         }
         
         string html = await _editor.GetValue();
-        _pdfDataUrl = HtmlConverterImagePDF.RenderLabelPDF(html, _label.HeightMm, _label.WidthMm, _assetSelector.JsonFields);
+        _pdfDataUrl = HtmlConverterImagePDF.RenderLabelPDF(html, _label.HeightMm, _label.WidthMm, _label.MarginLeft, _label.MarginRight, _label.MarginTop, _label.MarginBottom, _assetSelector.JsonFields);
     }
 
     private async Task SaveLabel()
     {
         _label.HTML = await _editor.GetValue();
 
-        _label.PdfBaseString = HtmlConverterImagePDF.RenderLabelPDF(_label.HTML, _label.HeightMm, _label.WidthMm, null);
+        _label.PdfBaseString = HtmlConverterImagePDF.RenderLabelPDF(_label.HTML, _label.HeightMm, _label.WidthMm, _label.MarginLeft, _label.MarginRight, _label.MarginTop, _label.MarginBottom, null);
 
         switch (_selectedUnit)
         {

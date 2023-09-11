@@ -34,6 +34,11 @@
                             <span class="oi oi-question-mark" aria-hidden="true"></span> @Localizer["help"]
                         </button>
                     </li>
+                    <li class="nav-item me-2">
+                        <button class="btn btn-outline-primary" @onclick="@(() => Modal.Show<Info>(Localizer["info"], _helpModalOptions))">
+                            <span class="oi oi-info" aria-hidden="true"></span>
+                        </button>
+                    </li>
                     <li class="nav-item ms-auto">
                         <ChooseLanguage></ChooseLanguage>
                     </li>

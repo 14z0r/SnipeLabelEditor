@@ -32,6 +32,18 @@ namespace SnipeLabelEditor.Migrations
                     b.Property<int>("HeightPx")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("MarginBottom")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MarginLeft")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MarginRight")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MarginTop")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");

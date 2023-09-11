@@ -12,11 +12,11 @@ namespace SnipeLabelEditor.Data
         private static QRCodeGenerator _generator = new QRCodeGenerator();
         private static Barcode _barcode = new Barcode();
 
-        private static string RenderPDFAsBase64(string html, int height, int width)
+        private static string RenderPDFAsBase64(string html, int height, int width, int margin_left, int margin_right, int margin_top, int margin_bottom)
         {
             html = $"<div style=\"margin: -8px -8px -8px -8px;\"> {html} </div>";
 
-            var bytes = _pdfConverter.FromHtmlString(html, "utf-8",width, height);
+            var bytes = _pdfConverter.FromHtmlString(html, "utf-8",width, height, margin_left, margin_top, margin_right, margin_bottom);
 
             return string.Format("data:application/pdf;base64,{0}", Convert.ToBase64String(bytes));
         }
@@ -63,7 +63,7 @@ namespace SnipeLabelEditor.Data
             return html;
         }
 
-        public static string RenderLabelPDF(string html, int heightmm, int widthmm, Dictionary<string, string>? fields)
+        public static string RenderLabelPDF(string html, int heightmm, int widthmm, int margin_left, int margin_right, int margin_top, int margin_bottom, Dictionary<string, string>? fields)
         {
             if (fields != null)
             {
@@ -128,7 +128,7 @@ namespace SnipeLabelEditor.Data
 
             html = htmlDocument.DocumentNode.OuterHtml;
 
-            string pdfBase64String = RenderPDFAsBase64(html, heightmm, widthmm);
+            string pdfBase64String = RenderPDFAsBase64(html, heightmm, widthmm, margin_left, margin_right, margin_top, margin_bottom);
 
             return pdfBase64String;
         }

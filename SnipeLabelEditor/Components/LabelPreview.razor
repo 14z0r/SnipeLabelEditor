@@ -7,15 +7,19 @@
         <div class="row">
             <embed type="application/pdf" src="@(Label.PdfBaseString + "#toolbar=1")" style="overflow: hidden"/>
         </div>
+        <hr/>
         <div class="row">
             <div class="col">
                 <button class="btn btn-primary" @onclick="Open">@Localizer["open"]</button>
             </div>
             <div class="col">
-                <button class="btn btn-success" @onclick="Edit">@Localizer["edit"]</button>
+                <button class="btn btn-primary" @onclick="Edit">@Localizer["edit"]</button>
             </div>
             <div class="col">
-                <button class="btn btn-danger" @onclick="Edit">@Localizer["delete"]</button>
+                <button class="btn btn-primary" @onclick="CopyAndEdit">@Localizer["copyAndEdit"]</button>
+            </div>
+            <div class="col">
+                <button class="btn btn-danger" @onclick="RequestDeleteLabel">@Localizer["delete"]</button>
             </div>
         </div>
     </div>
@@ -23,6 +27,9 @@
 }
 
 @code {
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
+    
     [Parameter]
     public Label? Label { get; set; }
     
@@ -34,5 +41,21 @@
     private void Edit()
     {
         NavigationManager.NavigateTo("labeleditor/" + Label.Id);
+    }
+    
+    private void CopyAndEdit()
+    {
+        NavigationManager.NavigateTo("labeleditor/copyandedit/" + Label.Id);
+    }
+    
+    private async Task RequestDeleteLabel()
+    {
+        var deleteLabel = Modal.Show<DeleteLabel>(Label.Name, new ModalParameters() { { nameof(DeleteLabel.Label), Label } });
+        var result = await deleteLabel.Result;
+
+        if (result.Confirmed)
+        {
+            await BlazoredModal.CloseAsync(ModalResult.Ok());
+        }
     }
 }

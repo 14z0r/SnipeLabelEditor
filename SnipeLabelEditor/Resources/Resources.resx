@@ -111,4 +111,31 @@
     <data name="importFailed" xml:space="preserve">
         <value>The labels could not be imported:</value>
     </data>
+    <data name="marginLeft" xml:space="preserve">
+        <value>Margin left</value>
+    </data>
+    <data name="marginRight" xml:space="preserve">
+        <value>Margin right</value>
+    </data>
+    <data name="marginTop" xml:space="preserve">
+        <value>Margin top</value>
+    </data>
+    <data name="marginBottom" xml:space="preserve">
+        <value>Margin bottom</value>
+    </data>
+    <data name="copyAndEdit" xml:space="preserve">
+        <value>Copy and edit</value>
+    </data>
+    <data name="welcome" xml:space="preserve">
+        <value>Welcome</value>
+    </data>
+    <data name="printView" xml:space="preserve">
+        <value>Print</value>
+    </data>
+    <data name="info" xml:space="preserve">
+        <value>Informations</value>
+    </data>
+    <data name="about" xml:space="preserve">
+        <value>With the SnipeLabelEditor you can easily create labels with HTML and CSS and have them output as PDF. Through the connection to the Snipe API you can work with variables, which are automatically replaced when rendering the PDF. It is also possible to create barcodes and QR codes. Have fun designing.</value>
+    </data>
 </root>
