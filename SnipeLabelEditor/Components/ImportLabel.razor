@@ -17,31 +17,9 @@
     {
         try
         {
-            var memoryStream = new MemoryStream();
-            await e.File.OpenReadStream().CopyToAsync(memoryStream);
+            await ImportExportLabels.ImportLabels(e.File, DbContext);
 
-            memoryStream.Position = 0;
-            var sr = new StreamReader(memoryStream);
-        
-            string json = await sr.ReadToEndAsync();
-
-            List<Label> labels = JsonSerializer.Deserialize<List<Label>>(json);
-
-            foreach (var label in labels)
-            {
-                label.Id = 0;
-                DbContext.Labels.Add(label);
-            }
-
-            await DbContext.SaveChangesAsync();
-
-            string message = Localizer["importSucceeded"];
-            foreach (var label in labels)
-            {
-                message += "-" + label.Name;
-            }
-
-            ToastService.ShowSuccess(message);
+            ToastService.ShowSuccess(Localizer["importSucceeded"]);
         
             await BlazoredModal.CloseAsync(ModalResult.Ok());
         }

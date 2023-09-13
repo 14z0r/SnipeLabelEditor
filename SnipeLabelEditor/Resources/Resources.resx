@@ -106,7 +106,7 @@
         <value>Import from file</value>
     </data>
     <data name="importSucceeded" xml:space="preserve">
-        <value>The following labels were successfully imported:</value>
+        <value>Labels were successfully imported.</value>
     </data>
     <data name="importFailed" xml:space="preserve">
         <value>The labels could not be imported:</value>

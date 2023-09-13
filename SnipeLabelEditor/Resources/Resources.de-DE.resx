@@ -78,7 +78,7 @@
         <value>Aus Datei importieren</value>
     </data>
     <data name="importSucceeded" xml:space="preserve">
-        <value>Folgende Labels wurden erfolgreich importiert:</value>
+        <value>Labels wurden erfolgreich importiert.</value>
     </data>
     <data name="importFailed" xml:space="preserve">
         <value>Die Labels konnten nicht importiert werden:</value>

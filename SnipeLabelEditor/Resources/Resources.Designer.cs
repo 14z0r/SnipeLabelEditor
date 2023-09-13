@@ -204,7 +204,7 @@ namespace SnipeLabelEditor.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following labels were successfully imported:.
+        ///   Looks up a localized string similar to Labels were successfully imported..
         /// </summary>
         internal static string importSucceeded {
             get {
