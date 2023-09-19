@@ -366,6 +366,15 @@ namespace SnipeLabelEditor.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search in name.
+        /// </summary>
+        internal static string searchInName {
+            get {
+                return ResourceManager.GetString("searchInName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Settings.
         /// </summary>
         internal static string settings {

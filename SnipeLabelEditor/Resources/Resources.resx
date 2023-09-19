@@ -138,4 +138,7 @@
     <data name="about" xml:space="preserve">
         <value>With the SnipeLabelEditor you can easily create labels with HTML and CSS and have them output as PDF. Through the connection to the Snipe API you can work with variables, which are automatically replaced when rendering the PDF. It is also possible to create barcodes and QR codes. Have fun designing.</value>
     </data>
+    <data name="searchInName" xml:space="preserve">
+        <value>Search in name</value>
+    </data>
 </root>

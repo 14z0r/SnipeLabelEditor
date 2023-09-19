@@ -7,8 +7,24 @@
 <PageTitle>@Localizer["welcome"]</PageTitle>
 
 <div class="container">
-    <button @onclick="ImportLabel" class="btn btn-success">@Localizer["importLabels"]</button>
-    <button @onclick="DownloadFileFromStream" class="btn btn-primary">@Localizer["exportLabels"]</button>
+    <div class="row">
+        <div class="col-4">
+            <div class="input-group">
+                <input class="form-control" @bind="_searchInName" placeholder="@Localizer["searchInName"]"/>
+                <button class="btn btn-outline-primary" @onclick="LoadLabels">
+                    <span class="oi oi-magnifying-glass"></span>
+                </button>
+            </div>
+        </div>
+        <div class="col">
+             <button class="btn btn-outline-primary" @onclick="LoadLabels">
+                <span class="oi oi-reload"></span>
+            </button>
+            <button @onclick="ImportLabel" class="btn btn-success">@Localizer["importLabels"]</button>
+            <button @onclick="DownloadFileFromStream" class="btn btn-primary">@Localizer["exportLabels"]</button>
+        </div>
+    </div>
+    
     <table class="table">
         <thead>
         <tr>
@@ -41,12 +57,25 @@
     
     protected override async Task OnInitializedAsync()
     {
-        _labels = await DbContext.Labels.ToListAsync();
+        await LoadLabels();
     }
     
     private List<Label> _labels;
 
     private List<Label> _labelsForExport = new List<Label>();
+
+    private string _searchInName = "";
+    private async Task LoadLabels()
+    {
+        if (string.IsNullOrEmpty(_searchInName))
+        {
+            _labels = await DbContext.Labels.ToListAsync();
+        }
+        else
+        {
+            _labels = await DbContext.Labels.Where(x => x.Name.ToLower().Contains(_searchInName.ToLower())).ToListAsync();
+        }
+    }
     
     private async Task Preview(Label label)
     {
