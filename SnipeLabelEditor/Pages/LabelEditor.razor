@@ -173,17 +173,24 @@
 
     protected override async Task OnInitializedAsync()
     {
+        if (NavManager.Uri.Contains("copyandedit"))
+        {
+            var label = await DbContext.Labels.AsNoTracking().FirstOrDefaultAsync(x => x.Id == LabelId);
+            if (label is not null)
+            {
+                _label = label;
+                _label.Id = 0;
+            }
+            
+            return;
+        }
+        
         if (LabelId > 0)
         {
             var label = await DbContext.Labels.FirstOrDefaultAsync(x => x.Id == LabelId);
             if (label is not null)
             {
                 _label = label;
-                
-                if (NavManager.Uri.Contains("copyandedit"))
-                {
-                    _label.Id = 0;
-                }
             }
         }
     }
