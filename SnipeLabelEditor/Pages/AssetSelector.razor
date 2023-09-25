@@ -44,7 +44,7 @@
     {
         try
         {
-            string jsonstring = await Globals.SnipeIT.GetStringAsync($"hardware/{id}");
+            string jsonstring = await Globals.SnipeIT.GetStringAsync($"/api/v1/hardware/{id}");
 
             var node = JsonStringToJsonNode(jsonstring);
 
