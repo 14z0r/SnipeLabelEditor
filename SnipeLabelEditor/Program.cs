@@ -20,6 +20,12 @@ namespace SnipeLabelEditor
             builder.Services.AddBlazoredToast();
             builder.Services.AddBlazoredModal();
 
+            string configDirectory = Path.Combine(Environment.CurrentDirectory, "config");
+            if (!Directory.Exists(configDirectory))
+            {
+                Directory.CreateDirectory(configDirectory);
+            }
+            
             builder.Services.AddDbContextFactory<LabelsDBContext>(opt =>
                     opt.UseSqlite($"Data Source={Path.Combine(Environment.CurrentDirectory, "config","labels.db")}"));
 
