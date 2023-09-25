@@ -8,7 +8,7 @@ namespace SnipeLabelEditor.Data
         public string APIBaseURL { get; set; } = string.Empty;
         public string APIBarerToken { get; set; } = string.Empty;
 
-        private static string filename = Path.Combine(Environment.CurrentDirectory, "settings.json");
+        private static string filename = Path.Combine(Environment.CurrentDirectory, "config","settings.json");
 
         public static APISettings LoadSettings()
         {

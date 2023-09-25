@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /SnipeLabelEditor/appsettings.json
 /SnipeLabelEditor/settings.json
+/SnipeLabelEditor/labels.db
