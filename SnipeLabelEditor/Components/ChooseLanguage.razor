@@ -1,0 +1,50 @@
+﻿@inject NavigationManager NavigationManager
+@inject IConfiguration Configuration
+@inject IStringLocalizer<Resources> Localizer
+
+<div class="input-group" style="width: auto">
+    <span class="input-group-text" id="basic-addon1">@Localizer["language"]</span>
+    <select class="form-select" @bind="SelectedCulture">
+        @foreach (var culture in _supportedLanguages)
+        {
+            <option value="@culture.Key">@culture.Value</option>
+        }
+    </select>
+</div>
+
+@code {
+    private Dictionary<string, string> _supportedLanguages = new Dictionary<string, string>()
+    {
+        { "en-EN", "English" },
+        { "de-DE", "Deutsch" },
+    };
+
+    private string _selectedCulture = Thread.CurrentThread.CurrentCulture.Name;
+    private string SelectedCulture
+    {
+        get => _selectedCulture;
+        set
+        {
+            _selectedCulture = value;
+            RequestCultureChange();
+        }
+    }
+
+    
+    
+    private void RequestCultureChange()
+    {
+        if (string.IsNullOrWhiteSpace(_selectedCulture))
+        {
+            return;
+        }
+
+        var uri = new Uri(NavigationManager.Uri)
+            .GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
+
+        var query = $"?culture={Uri.EscapeDataString(_selectedCulture)}&" +
+                    $"redirectUri={Uri.EscapeDataString(uri)}";
+
+        NavigationManager.NavigateTo("/Culture/SetCulture" + query, forceLoad: true);
+    }
+}

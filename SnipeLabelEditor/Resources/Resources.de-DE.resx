@@ -47,8 +47,8 @@
     <data name="width" xml:space="preserve">
         <value>Länge</value>
     </data>
-    <data name="exampleAssetText" xml:space="preserve">
-        <value>Laden Sie ein Beispiel-Asset, um sich die Variablennamen anzeigen zu lassen.</value>
+    <data name="loadAsset" xml:space="preserve">
+        <value>Asset auswählen nach</value>
     </data>
     <data name="nameRequired" xml:space="preserve">
         <value>Bitte geben Sie einen Namen für Ihr Label an.</value>
@@ -115,5 +115,11 @@
     </data>
     <data name="searchInName" xml:space="preserve">
         <value>Im Namen suchen</value>
+    </data>
+    <data name="language" xml:space="preserve">
+        <value>Sprache</value>
+    </data>
+    <data name="selectAssetByTag" xml:space="preserve">
+        <value>Asset-Tag/Seriennummer</value>
     </data>
 </root>

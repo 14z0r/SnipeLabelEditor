@@ -1,50 +1,92 @@
 ﻿@page "/assetselector"
 @inject IToastService ToastService
+@inject IStringLocalizer<Resources> Localizer
 
-@if (IsVisible)
+<div class="input-group mb-3">
+    <label class="input-group-text">@Localizer["loadAsset"]</label>
+    <select class="form-select" @bind="_searchAssetBy">
+        <option selected="selected" value="@Localizer["selectAssetByTag"].Name">@Localizer["selectAssetByTag"]</option>
+        <option value="@Localizer["selectAssetById"].Name">@Localizer["selectAssetById"]</option>
+    </select>
+    @switch (_searchAssetBy)
+    {
+        case "selectAssetByTag":
+            <input class="form-control" @bind="_assetTag" @onkeyup="@(args => { if (args.Key == "Enter") SetAssetByTag(); })"/>
+            <button class="btn btn-primary" @onclick="SetAssetByTag">@Localizer["apply"]</button>
+            break;
+        case "selectAssetById":
+            <input class="form-control" @bind="_assetId" @onkeyup="@(args => { if (args.Key == "Enter") SetAssetById(); })"/>
+            <button class="btn btn-primary" @onclick="SetAssetById">@Localizer["apply"]</button>
+            break;
+        default:
+            <input class="form-control" @bind="_assetTag" @onkeyup="@(args => { if (args.Key == "Enter") SetAssetByTag(); })"/>
+            <button class="btn btn-primary" @onclick="SetAssetByTag">@Localizer["apply"]</button>
+            break;
+    }
+</div>
+@if (!HideTableOfValues)
 {
-    <div class="overflow-auto" style="max-height: 640px">
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>Variable</th>
-                <th>Value</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var item in JsonFields)
-            {
+    <div class="row">
+        <div class="overflow-auto" style="max-height: 640px">
+            <table class="table table-striped">
+                <thead>
                 <tr>
-                    <td>@item.Key</td>
-                    <td>@item.Value</td>
+                    <th>Variable</th>
+                    <th>Value</th>
                 </tr>
-            }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                @foreach (var item in JsonFields)
+                {
+                    <tr>
+                        <td>@item.Key</td>
+                        <td>@item.Value</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
     </div>
 }
 
 @code {
-    private bool _isVisible = true;
+    private bool _hideTableOfValues = false;
 
     [Parameter]
-    public bool IsVisible
+    public bool HideTableOfValues
     {
-        get => _isVisible;
+        get => _hideTableOfValues;
         set
         {
-            _isVisible = value; 
+            _hideTableOfValues = value; 
             StateHasChanged();
         }
     }
 
+    [Parameter]
+    public EventCallback OnAssetChanged { get; set; }
+
     public Dictionary<string, string> JsonFields = new Dictionary<string, string>();
 
-    public async Task SetAsset(int id)
+    private string _searchAssetBy;
+    private int _assetId;
+    private string _assetTag;
+
+    private async Task SetAssetById()
+    {
+        await SetAsset($"{_assetId}");
+    }
+    
+    private async Task SetAssetByTag()
+    {
+        await SetAsset($"bytag/{_assetTag}");
+    }
+    
+    private async Task SetAsset(string endpoint)
     {
         try
         {
-            string jsonstring = await Globals.SnipeIT.GetStringAsync($"/api/v1/hardware/{id}");
+            string jsonstring = await Globals.SnipeIT.GetStringAsync($"/api/v1/hardware/{endpoint}");
 
             var node = JsonStringToJsonNode(jsonstring);
 
@@ -60,6 +102,8 @@
         }
         
         StateHasChanged();
+
+        await OnAssetChanged.InvokeAsync();
     }
 
     private JsonNode JsonStringToJsonNode(string jsonstring)

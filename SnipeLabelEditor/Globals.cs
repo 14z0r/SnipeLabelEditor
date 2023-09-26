@@ -6,7 +6,6 @@ namespace SnipeLabelEditor
     public class Globals
     {
         private static HttpClient _snipeIT;
-
         public static HttpClient SnipeIT
         {
             get
@@ -16,23 +15,20 @@ namespace SnipeLabelEditor
                     _snipeIT = new HttpClient();
                     _snipeIT.BaseAddress = new Uri(Settings.APIBaseURL);
                     _snipeIT.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Settings.APIBarerToken);
-
                 }
 
                 return _snipeIT;
             }
         }
-
-        public static APISettings Settings 
+        public static ApiSettings Settings 
         {
-            get => APISettings.LoadSettings();
+            get => ApiSettings.LoadSettings();
             set => Settings = value;
         }
-
-        public static Dictionary<string, string> SupportedLanguages = new Dictionary<string, string>()
+        
+        public static string ConfigBaseDirectory
         {
-            { "en-EN", "English" },
-            { "de-DE", "Deutsch" },
-        };
+            get => Path.Combine(Environment.CurrentDirectory, "config");
+        }
     }
 }
