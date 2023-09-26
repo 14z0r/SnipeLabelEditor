@@ -75,8 +75,8 @@
     <data name="reloadLabel" xml:space="preserve">
         <value>Reload label</value>
     </data>
-    <data name="exampleAssetText" xml:space="preserve">
-        <value>Load a sample asset to view the variable names.</value>
+    <data name="loadAsset" xml:space="preserve">
+        <value>Load a asset by</value>
     </data>
     <data name="nameRequired" xml:space="preserve">
         <value>Please provide a name for your label.</value>
@@ -140,5 +140,14 @@
     </data>
     <data name="searchInName" xml:space="preserve">
         <value>Search in name</value>
+    </data>
+    <data name="language" xml:space="preserve">
+        <value>Language</value>
+    </data>
+    <data name="selectAssetById" xml:space="preserve">
+        <value>Asset-ID</value>
+    </data>
+    <data name="selectAssetByTag" xml:space="preserve">
+        <value>Asset-Tag/Serrialnumber</value>
     </data>
 </root>

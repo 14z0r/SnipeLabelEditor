@@ -123,15 +123,6 @@ namespace SnipeLabelEditor.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Load a sample asset to view the variable names..
-        /// </summary>
-        internal static string exampleAssetText {
-            get {
-                return ResourceManager.GetString("exampleAssetText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Export selected.
         /// </summary>
         internal static string exportLabels {
@@ -245,6 +236,24 @@ namespace SnipeLabelEditor.Resources {
         internal static string labels {
             get {
                 return ResourceManager.GetString("labels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language.
+        /// </summary>
+        internal static string language {
+            get {
+                return ResourceManager.GetString("language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Load a asset by.
+        /// </summary>
+        internal static string loadAsset {
+            get {
+                return ResourceManager.GetString("loadAsset", resourceCulture);
             }
         }
         
@@ -371,6 +380,24 @@ namespace SnipeLabelEditor.Resources {
         internal static string searchInName {
             get {
                 return ResourceManager.GetString("searchInName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Asset-ID.
+        /// </summary>
+        internal static string selectAssetById {
+            get {
+                return ResourceManager.GetString("selectAssetById", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Asset-Tag/Serrialnumber.
+        /// </summary>
+        internal static string selectAssetByTag {
+            get {
+                return ResourceManager.GetString("selectAssetByTag", resourceCulture);
             }
         }
         

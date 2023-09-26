@@ -9,13 +9,10 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            <div class="input-group mb-3">
-                <span class="input-group-text">@Localizer["assetId"]</span>
-                <input class="form-control" @bind="_assetId"/>
-            </div>
+            <AssetSelector @ref="_assetSelector" HideTableOfValues="true" OnAssetChanged="RenderPdf"></AssetSelector>
         </div>
+        
         <div class="col">
-            <button class="btn btn-success" @onclick="RerenderLabel">@Localizer["apply"]</button>
             <button class="btn btn-primary" @onclick="Edit">@Localizer["edit"]</button>
         </div>
     </div>
@@ -23,7 +20,7 @@
    @if (string.IsNullOrEmpty(_pdfDataUrl))
    {
        <Loading DisplayText="@Localizer["generatePdf"]"></Loading>
-       RerenderLabel();
+       RenderPdf();
    }
    else
    {
@@ -33,9 +30,6 @@
            </div>
        </div>
    }
-    <div class="row">
-        <AssetSelector @ref="_assetSelector" IsVisible="false"></AssetSelector>
-    </div>
 </div>
 
 @code {
@@ -50,7 +44,7 @@
     
     string _pdfDataUrl = string.Empty;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         if (LabelId > 0)
         {
@@ -59,23 +53,13 @@
             {
                 _label = label;
 
-                await RerenderLabel();
+                RenderPdf();
                 
                 return;
             }
         }
         
         ToastService.ShowError(Localizer["labelNotExist"]);
-    }
-
-    private async Task RerenderLabel()
-    {
-        if (_assetSelector != null && _assetId > 0)
-        {
-            await _assetSelector.SetAsset(_assetId);
-        }
-        
-        RenderPdf();
     }
 
     private void RenderPdf()

@@ -19,13 +19,13 @@
 </div>
 
 @code{
-    APISettings _settings = Globals.Settings;
+    ApiSettings _settings = Globals.Settings;
     
     private void SaveChanges()
     {
         try
         {
-            APISettings.SaveSettings(_settings);
+            ApiSettings.SaveSettings(_settings);
             ToastService.ShowSuccess(Localizer["settingsSaved"]);
         }
         catch (Exception ex)

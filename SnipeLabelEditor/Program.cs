@@ -27,7 +27,7 @@ namespace SnipeLabelEditor
             }
             
             builder.Services.AddDbContextFactory<LabelsDBContext>(opt =>
-                    opt.UseSqlite($"Data Source={Path.Combine(Environment.CurrentDirectory, "config","labels.db")}"));
+                    opt.UseSqlite($"Data Source={Path.Combine(Globals.ConfigBaseDirectory,"labels.db")}"));
 
             builder.Services.AddCors(options =>
             {

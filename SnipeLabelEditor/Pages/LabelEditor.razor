@@ -142,19 +142,7 @@
             </div>
             <div class="col-4">
                 <div class="row">
-                    <div>@Localizer["exampleAssetText"]</div>
-                    <div class="col">
-                        <div class="input-group mb-3">
-                            <span class="input-group-text">@Localizer["assetId"]</span>
-                            <input class="form-control" @bind="_assetId"/>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <button class="btn btn-success" @onclick="RenderPDF">@Localizer["apply"]</button>
-                    </div>
-                </div>
-                <div class="row">
-                    <AssetSelector @ref="_assetSelector"/>
+                    <AssetSelector @ref="_assetSelector" OnAssetChanged="RenderPDF"/>
                 </div>
             </div>
         </div>
@@ -249,11 +237,6 @@
 
     private async Task RenderPDF()
     {
-        if (_assetSelector != null && _assetId > 0)
-        {
-            await _assetSelector.SetAsset(_assetId);
-        }
-        
         switch (_selectedUnit)
         {
             case "mm":

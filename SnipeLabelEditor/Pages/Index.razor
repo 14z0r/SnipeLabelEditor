@@ -10,7 +10,7 @@
     <div class="row">
         <div class="col-4">
             <div class="input-group">
-                <input class="form-control" @bind="_searchInName" placeholder="@Localizer["searchInName"]"/>
+                <input class="form-control" @bind="_searchInName" placeholder="@Localizer["searchInName"]" @onkeyup="@(args => { if(args.Key == "Enter") LoadLabels(); })"/>
                 <button class="btn btn-outline-primary" @onclick="LoadLabels">
                     <span class="oi oi-magnifying-glass"></span>
                 </button>
@@ -76,7 +76,7 @@
             _labels = await DbContext.Labels.Where(x => x.Name.ToLower().Contains(_searchInName.ToLower())).ToListAsync();
         }
     }
-    
+
     private async Task Preview(Label label)
     {
         var deleteLabel = Modal.Show<LabelPreview>(label.Name, new ModalParameters() { { nameof(LabelPreview.Label), label } });
