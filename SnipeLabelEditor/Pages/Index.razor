@@ -29,37 +29,62 @@
         <thead>
         <tr>
             <th></th>
+            <th></th>
             <th>@Localizer["name"]</th>
             <th></th>
         </tr>
         </thead>
         <tbody>
-        @foreach (var item in _labels)
-        {
-            <tr>
-                <td><input class="form-check-input" type="checkbox" @onchange="() => AddRemoveLabelForExport(item)"/></td>
-                <td>@item.Name</td>
-                <td>
-                    <button class="btn btn-primary" @onclick="() => Preview(item)">@Localizer["preview"]</button>
-                    <button class="btn btn-primary" @onclick="() => Open(item.Id)">@Localizer["open"]</button>
-                    <button class="btn btn-primary" @onclick="() => Edit(item.Id)">@Localizer["edit"]</button>
-                    <button class="btn btn-primary" @onclick="() => CopyAndEdit(item.Id)">@Localizer["copyAndEdit"]</button>
-                    <button class="btn btn-danger" @onclick="() => RequestDeleteLabel(item)">@Localizer["delete"]</button>
-                </td>
-            </tr>
-        }
+            @foreach (var item in _labels.Where(x => x.Favorite == true).ToList())
+            {
+                <tr>
+                    <td><input class="form-check-input" type="checkbox" @onchange="() => AddRemoveLabelForExport(item)"/></td>
+                    <td>
+                        <button class="btn btn-outline-light" @onclick="() => RemoveFavorite(item.Id)">
+                            <span class="oi oi-star text-warning"></span>
+                        </button>
+                    </td>
+                    <td>@item.Name</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => Preview(item)">@Localizer["preview"]</button>
+                        <button class="btn btn-primary" @onclick="() => Open(item.Id)">@Localizer["open"]</button>
+                        <button class="btn btn-primary" @onclick="() => Edit(item.Id)">@Localizer["edit"]</button>
+                        <button class="btn btn-primary" @onclick="() => CopyAndEdit(item.Id)">@Localizer["copyAndEdit"]</button>
+                        <button class="btn btn-danger" @onclick="() => RequestDeleteLabel(item)">@Localizer["delete"]</button>
+                    </td>
+                </tr>
+            }
+            @foreach (var item in _labels.Where(x => x.Favorite == false).ToList())
+            {
+                <tr>
+                    <td><input class="form-check-input" type="checkbox" @onchange="() => AddRemoveLabelForExport(item)" /></td>
+                    <td>
+                        <button class="btn btn-outline-light" @onclick="() => AddFavorite(item.Id)">
+                            <span class="oi oi-star text-black"></span>
+                        </button>
+                    </td>
+                    <td>@item.Name</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => Preview(item)">@Localizer["preview"]</button>
+                        <button class="btn btn-primary" @onclick="() => Open(item.Id)">@Localizer["open"]</button>
+                        <button class="btn btn-primary" @onclick="() => Edit(item.Id)">@Localizer["edit"]</button>
+                        <button class="btn btn-primary" @onclick="() => CopyAndEdit(item.Id)">@Localizer["copyAndEdit"]</button>
+                        <button class="btn btn-danger" @onclick="() => RequestDeleteLabel(item)">@Localizer["delete"]</button>
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 </div>
 
 @code {
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
-    
+
     protected override async Task OnInitializedAsync()
     {
         await LoadLabels();
     }
-    
+
     private List<Label> _labels;
 
     private List<Label> _labelsForExport = new List<Label>();
@@ -80,7 +105,7 @@
     private async Task Preview(Label label)
     {
         var deleteLabel = Modal.Show<LabelPreview>(label.Name, new ModalParameters() { { nameof(LabelPreview.Label), label } });
-        
+
         var result = await deleteLabel.Result;
 
         if (result.Confirmed)
@@ -88,17 +113,17 @@
             _labels = await DbContext.Labels.ToListAsync();
         }
     }
-    
+
     private void Open(int id)
     {
         NavigationManager.NavigateTo($"printview/" + id);
     }
-    
+
     private void Edit(int id)
     {
         NavigationManager.NavigateTo("labeleditor/" + id);
     }
-    
+
     private void CopyAndEdit(int id)
     {
         NavigationManager.NavigateTo("labeleditor/copyandedit/" + id);
@@ -150,7 +175,7 @@
             _labels = await DbContext.Labels.ToListAsync();
         }
     }
-    
+
     private async Task ImportLabel()
     {
         var importLabel = Modal.Show<ImportLabel>(Localizer["importLabels"]);
@@ -159,6 +184,30 @@
         if (result.Confirmed)
         {
             _labels = await DbContext.Labels.ToListAsync();
+        }
+    }
+
+    private async Task AddFavorite(int id)
+    {
+        var lable = await DbContext.Labels.Where(x => x.Id == id).FirstOrDefaultAsync();
+        if (lable is not null)
+        {
+            lable.Favorite = true;
+            DbContext.Labels.Update(lable);
+            await DbContext.SaveChangesAsync();
+            await LoadLabels();
+        }
+    }
+
+    private async Task RemoveFavorite(int id)
+    {
+        var lable = await DbContext.Labels.Where(x => x.Id == id).FirstOrDefaultAsync();
+        if (lable is not null)
+        {
+            lable.Favorite = false;
+            DbContext.Labels.Update(lable);
+            await DbContext.SaveChangesAsync();
+            await LoadLabels();
         }
     }
 }

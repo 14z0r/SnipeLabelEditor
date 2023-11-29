@@ -38,5 +38,6 @@ namespace SnipeLabelEditor.Models
         public int MarginRight { get; set; }
         public int MarginTop { get; set; }
         public int MarginBottom { get; set; }
+        public bool Favorite { get; set; } = false;
     }
 }
