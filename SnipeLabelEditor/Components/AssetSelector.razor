@@ -10,13 +10,13 @@
     </select>
     @switch (_searchAssetBy)
     {
+        case "selectAssetById":
+            <input type="number" class="form-control" @bind="_assetId" @onkeyup="@(args => { if (args.Key == "Enter") SetAssetById(); })" />
+            <button class="btn btn-primary" @onclick="SetAssetById">@Localizer["apply"]</button>
+            break;
         case "selectAssetByTag":
             <input class="form-control" @bind="_assetTag" @onkeyup="@(args => { if (args.Key == "Enter") SetAssetByTag(); })"/>
             <button class="btn btn-primary" @onclick="SetAssetByTag">@Localizer["apply"]</button>
-            break;
-        case "selectAssetById":
-            <input class="form-control" @bind="_assetId" @onkeyup="@(args => { if (args.Key == "Enter") SetAssetById(); })"/>
-            <button class="btn btn-primary" @onclick="SetAssetById">@Localizer["apply"]</button>
             break;
         default:
             <input class="form-control" @bind="_assetTag" @onkeyup="@(args => { if (args.Key == "Enter") SetAssetByTag(); })"/>
@@ -63,12 +63,12 @@
         }
     }
 
-    [Parameter]
+    [Parameter] 
     public EventCallback OnAssetChanged { get; set; }
 
     public Dictionary<string, string> JsonFields = new Dictionary<string, string>();
 
-    private string _searchAssetBy;
+    private string _searchAssetBy = "selectAssetById";
     private int _assetId;
     private string _assetTag;
 
