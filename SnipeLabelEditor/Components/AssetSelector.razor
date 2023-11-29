@@ -5,8 +5,8 @@
 <div class="input-group mb-3">
     <label class="input-group-text">@Localizer["loadAsset"]</label>
     <select class="form-select" @bind="_searchAssetBy">
-        <option selected="selected" value="@Localizer["selectAssetByTag"].Name">@Localizer["selectAssetByTag"]</option>
-        <option value="@Localizer["selectAssetById"].Name">@Localizer["selectAssetById"]</option>
+        <option selected="selected" value="@Localizer["selectAssetById"].Name">@Localizer["selectAssetById"]</option>
+        <option value="@Localizer["selectAssetByTag"].Name">@Localizer["selectAssetByTag"]</option>
     </select>
     @switch (_searchAssetBy)
     {
